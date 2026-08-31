@@ -29,6 +29,7 @@ jobs:
           mkdir -p public
           cp index.html public/
           cp .nojekyll public/
+          cp -r assets public/assets
           rm -rf public/_backup
 
       - name: Setup Pages

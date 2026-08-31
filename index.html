@@ -3,7 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Estalingrado Corp - EC OS</title>
+    <title>EC OS — Sistema Operativo Web</title>
+    <meta name="description" content="EC OS: un sistema operativo completo basado en navegador con escritorio, ventanas arrastrables, modo oscuro y suite de 12 aplicaciones (Office, editor de imágenes, música, video, TV en vivo y más).">
+    <meta name="keywords" content="EC OS, sistema operativo web, webos, ipados, macOS, office, editor de imagenes, reproductor, IPTV, Estalingrado Corp">
+    <meta name="author" content="Estalingrado Corp">
+    <meta name="theme-color" content="#0b0f19">
+    <link rel="canonical" href="https://nicotips27.github.io/EC-OS/">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="EC OS — Sistema Operativo Web">
+    <meta property="og:description" content="Un sistema operativo completo en un solo archivo HTML: escritorio, ventanas, modo oscuro y 12 aplicaciones integradas.">
+    <meta property="og:url" content="https://nicotips27.github.io/EC-OS/">
+    <meta property="og:image" content="https://64.media.tumblr.com/37c52c25279f877bd0bc2d538626c938/2f8407cc51b2210e-be/s540x810/c379bb3cd18325d6b075e62fd26ffe91f5093ee3.jpg">
+    <meta property="og:site_name" content="EC OS">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="EC OS — Sistema Operativo Web">
+    <meta name="twitter:description" content="Un sistema operativo completo en un solo archivo HTML.">
+    <meta name="twitter:image" content="https://64.media.tumblr.com/37c52c25279f877bd0bc2d538626c938/2f8407cc51b2210e-be/s540x810/c379bb3cd18325d6b075e62fd26ffe91f5093ee3.jpg">
     
     <!-- Favicon -->
     <link rel="icon" type="image/jpeg" href="https://64.media.tumblr.com/37c52c25279f877bd0bc2d538626c938/2f8407cc51b2210e-be/s540x810/c379bb3cd18325d6b075e62fd26ffe91f5093ee3.jpg">
@@ -135,15 +154,46 @@
             min-width: 300px;
             min-height: 200px;
             border: 1px solid rgba(0,0,0,0.1);
-            animation: appOpen 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.1) forwards;
             z-index: 50;
             transition: background-color 0.3s, border-color 0.3s;
         }
+        .window.window-opening { animation: appOpen 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.1) forwards; }
+        /* Handles de redimension como macOS */
+        .resize-handle { position: absolute; z-index: 9; touch-action: none; }
+        .resize-handle-n { top: 0; left: 8px; right: 8px; height: 6px; cursor: ns-resize; }
+        .resize-handle-s { bottom: 0; left: 8px; right: 8px; height: 8px; cursor: ns-resize; }
+        .resize-handle-e { top: 8px; bottom: 8px; right: 0; width: 8px; cursor: ew-resize; }
+        .resize-handle-w { top: 8px; bottom: 8px; left: 0; width: 8px; cursor: ew-resize; }
+        .resize-handle-ne { top: 0; right: 0; width: 14px; height: 14px; cursor: nesw-resize; }
+        .resize-handle-nw { top: 0; left: 0; width: 14px; height: 14px; cursor: nwse-resize; }
+        .resize-handle-se { bottom: 0; right: 0; width: 14px; height: 14px; cursor: nwse-resize; }
+        .resize-handle-sw { bottom: 0; left: 0; width: 14px; height: 14px; cursor: nesw-resize; }
+        /* Evitar seleccion durante resize */
+        body.resizing { user-select: none !important; cursor: inherit; }
         
         @keyframes appOpen {
             0% { transform: scale(0.85); opacity: 0; }
             100% { transform: scale(1); opacity: 1; }
         }
+
+        .dock-badge {
+            position: absolute;
+            top: -3px;
+            right: -3px;
+            width: 13px;
+            height: 13px;
+            border-radius: 9999px;
+            background: #ef4444;
+            border: 2.5px solid white;
+            box-shadow: 0 2px 8px rgba(239,68,68,0.6), 0 0 0 1px rgba(0,0,0,0.08);
+            z-index: 10;
+            pointer-events: none;
+        }
+        .dock-badge.show { animation: badgePop 0.38s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+        @keyframes badgePop { 0% { transform: scale(0); } 60% { transform: scale(1.35); } 100% { transform: scale(1); } }
+        @keyframes dockBounce { 0% { transform: translateY(0) scale(1); } 30% { transform: translateY(-10px) scale(1.08); } 55% { transform: translateY(2px) scale(0.98); } 100% { transform: translateY(0) scale(1); } }
+        .dock-bounce { animation: dockBounce 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+        .window.is-animating { pointer-events: none; will-change: transform, opacity; }
 
         .title-bar {
             background: #f1f5f9;
@@ -660,6 +710,7 @@
         }
         .img-tool-btn:hover { background: #f1f5f9; color: #1e293b; border-color: #e2e8f0; }
         .img-tool-btn.active-tool { background: #eff6ff; color: #2563eb; border-color: #bfdbfe; font-weight: 600; }
+        .crop-aspect-btn.active-aspect { background: #eff6ff; color: #2563eb; border-color: #bfdbfe; font-weight: 600; }
         .img-slider {
             width: 100%; height: 4px; border-radius: 9999px; appearance: none;
             background: #e2e8f0; outline: none; cursor: pointer;
@@ -705,6 +756,7 @@
         body.dark-theme .img-tool-btn { color: #94a3b8; }
         body.dark-theme .img-tool-btn:hover { background: #334155; color: #e2e8f0; border-color: #475569; }
         body.dark-theme .img-tool-btn.active-tool { background: #1e3a5f; color: #60a5fa; border-color: #1e40af; }
+        body.dark-theme .crop-aspect-btn.active-aspect { background: #1e3a5f; color: #60a5fa; border-color: #1e40af; font-weight: 600; }
         body.dark-theme .img-preset-btn { background: #1e293b; color: #94a3b8; border-color: #334155; }
         body.dark-theme .img-preset-btn:hover { background: #334155; border-color: #3b82f6; }
         body.dark-theme .img-transform-btn { background: #1e293b; color: #94a3b8; border-color: #334155; }
@@ -717,7 +769,7 @@
         @media (max-width: 768px) {
             .window { width: 100% !important; height: 100% !important; top: 0 !important; left: 0 !important; border-radius: 0; border: none; }
             .title-bar { padding: 16px; padding-top: 30px; } 
-            .title-bar button.bg-red-500 { width: 20px !important; height: 20px !important; }
+            .title-bar button.bg-red-500, .title-bar button.bg-yellow-400 { width: 20px !important; height: 20px !important; }
             .office-workspace { padding: 10px 0; }
             .office-page { width: 95vw !important; height: auto !important; min-height: 130vw !important; box-shadow: 0 1px 4px rgba(0,0,0,0.2) !important; }
             .office-page-editor { padding: 12vw 10vw; font-size: 11pt; }
@@ -794,6 +846,43 @@
             <div class="flex gap-2">
                 <button onclick="closeSaveOfficeModal()" class="flex-1 py-3 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold rounded-xl transition">Cancelar</button>
                 <button onclick="executeSaveOfficeDoc()" class="flex-1 py-3 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-xl transition shadow-md">Descargar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Exportar Imagen -->
+    <div id="img-export-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-md z-[10000] flex items-center justify-center p-4">
+        <div class="bg-white/90 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl p-6 max-w-sm w-full text-center transform transition-all duration-300">
+            <div class="w-16 h-16 rounded-full bg-blue-100 text-blue-500 flex items-center justify-center text-3xl mx-auto mb-4">
+                <i class="fa-solid fa-image"></i>
+            </div>
+            <h3 class="text-gray-800 text-xl font-bold mb-4">Exportar Imagen</h3>
+
+            <div class="text-left mb-4">
+                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Formato</label>
+                <select id="img-export-format" class="w-full bg-white border border-gray-300 rounded-xl px-4 py-2 text-sm text-gray-700 focus:outline-none focus:border-blue-500 shadow-sm cursor-pointer" onchange="updateExportQualityVis()">
+                    <option value="png">PNG - Sin pérdida, transparente</option>
+                    <option value="jpeg">JPEG - Calidad comprimida</option>
+                    <option value="webp">WebP - Web moderno</option>
+                </select>
+            </div>
+
+            <div class="text-left mb-4">
+                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Escala</label>
+                <select id="img-export-scale" class="w-full bg-white border border-gray-300 rounded-xl px-4 py-2 text-sm text-gray-700 focus:outline-none focus:border-blue-500 shadow-sm cursor-pointer">
+                    <option value="1">1x - Resolución original</option>
+                    <option value="2">2x - Doble resolución</option>
+                </select>
+            </div>
+
+            <div class="text-left mb-6" id="img-export-quality-row">
+                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Calidad <span class="float-right" id="img-export-quality-val">90</span></label>
+                <input type="range" id="img-export-quality" min="10" max="100" value="90" class="img-slider" oninput="document.getElementById('img-export-quality-val').textContent=this.value">
+            </div>
+
+            <div class="flex gap-2">
+                <button onclick="closeExportModal()" class="flex-1 py-3 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold rounded-xl transition">Cancelar</button>
+                <button onclick="downloadExport()" class="flex-1 py-3 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-xl transition shadow-md">Descargar</button>
             </div>
         </div>
     </div>
@@ -890,60 +979,68 @@
 
     <!-- Dock Inferior (iPadOS Style) -->
     <div id="dock" class="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-white/20 backdrop-blur-2xl border border-white/30 rounded-[2rem] p-3 flex gap-4 z-40 shadow-2xl">
-        <div class="group relative cursor-pointer" onclick="openWindow('window-libreoffice')">
+        <div class="group relative cursor-pointer" onclick="toggleFromDock('window-libreoffice')">
             <div class="ios-icon w-12 h-12 md:w-14 md:h-14 flex items-center justify-center text-white text-2xl md:text-3xl transition transform group-active:scale-95 hover:-translate-y-2 bg-gradient-to-br from-blue-400 to-blue-600">
                 <i class="fa-solid fa-file-word"></i>
             </div>
+            <span class="dock-badge hidden" data-badge="window-libreoffice"></span>
             <span class="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-gray-800/90 text-white text-[11px] px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-lg">EC Office</span>
         </div>
         
-        <div class="group relative cursor-pointer" onclick="openWindow('window-notepad')">
+        <div class="group relative cursor-pointer" onclick="toggleFromDock('window-notepad')">
             <div class="ios-icon w-12 h-12 md:w-14 md:h-14 flex items-center justify-center text-white text-2xl md:text-3xl transition transform group-active:scale-95 hover:-translate-y-2 bg-gradient-to-br from-gray-700 to-black">
                 <i class="fa-solid fa-terminal text-green-400"></i>
             </div>
+            <span class="dock-badge hidden" data-badge="window-notepad"></span>
             <span class="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-gray-800/90 text-white text-[11px] px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-lg">ECCode</span>
         </div>
 
-        <div class="group relative cursor-pointer" onclick="openWindow('window-calc')">
+        <div class="group relative cursor-pointer" onclick="toggleFromDock('window-calc')">
             <div class="ios-icon w-12 h-12 md:w-14 md:h-14 flex items-center justify-center text-white text-2xl md:text-3xl transition transform group-active:scale-95 hover:-translate-y-2 bg-gradient-to-br from-orange-400 to-red-500">
                 <i class="fa-solid fa-calculator"></i>
             </div>
+            <span class="dock-badge hidden" data-badge="window-calc"></span>
             <span class="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-gray-800/90 text-white text-[11px] px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-lg">Calculadora</span>
         </div>
 
-        <div class="group relative cursor-pointer" onclick="openWindow('window-img-editor')">
+        <div class="group relative cursor-pointer" onclick="toggleFromDock('window-img-editor')">
             <div class="ios-icon w-12 h-12 md:w-14 md:h-14 flex items-center justify-center text-white text-2xl md:text-3xl transition transform group-active:scale-95 hover:-translate-y-2 bg-gradient-to-br from-red-400 to-pink-600">
                 <i class="fa-solid fa-palette"></i>
             </div>
+            <span class="dock-badge hidden" data-badge="window-img-editor"></span>
             <span class="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-gray-800/90 text-white text-[11px] px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-lg">EC Studio</span>
         </div>
         
         <!-- Nuevos iconos en el Dock: Música y Ajustes -->
-        <div class="group relative cursor-pointer" onclick="openWindow('window-music')">
+        <div class="group relative cursor-pointer" onclick="toggleFromDock('window-music')">
             <div class="ios-icon w-12 h-12 md:w-14 md:h-14 flex items-center justify-center text-white text-2xl md:text-3xl transition transform group-active:scale-95 hover:-translate-y-2 bg-gradient-to-br from-red-500 to-orange-400">
                 <i class="fa-solid fa-music"></i>
             </div>
+            <span class="dock-badge hidden" data-badge="window-music"></span>
             <span class="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-gray-800/90 text-white text-[11px] px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-lg">Música</span>
         </div>
 
-        <div class="group relative cursor-pointer" onclick="openWindow('window-video')">
+        <div class="group relative cursor-pointer" onclick="toggleFromDock('window-video')">
             <div class="ios-icon w-12 h-12 md:w-14 md:h-14 flex items-center justify-center text-white text-2xl md:text-3xl transition transform group-active:scale-95 hover:-translate-y-2 bg-gradient-to-br from-pink-500 to-rose-600">
                 <i class="fa-solid fa-film"></i>
             </div>
+            <span class="dock-badge hidden" data-badge="window-video"></span>
             <span class="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-gray-800/90 text-white text-[11px] px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-lg">EC Video</span>
         </div>
 
-        <div class="group relative cursor-pointer" onclick="openWindow('window-appstore')">
+        <div class="group relative cursor-pointer" onclick="toggleFromDock('window-appstore')">
             <div class="ios-icon w-12 h-12 md:w-14 md:h-14 flex items-center justify-center text-white text-2xl md:text-3xl transition transform group-active:scale-95 hover:-translate-y-2 bg-gradient-to-br from-cyan-500 to-blue-600">
                 <i class="fa-solid fa-bag-shopping"></i>
             </div>
+            <span class="dock-badge hidden" data-badge="window-appstore"></span>
             <span class="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-gray-800/90 text-white text-[11px] px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-lg">Tienda</span>
         </div>
 
-        <div class="group relative cursor-pointer" onclick="openWindow('window-ajustes')">
+        <div class="group relative cursor-pointer" onclick="toggleFromDock('window-ajustes')">
             <div class="ios-icon w-12 h-12 md:w-14 md:h-14 flex items-center justify-center text-white text-2xl md:text-3xl transition transform group-active:scale-95 hover:-translate-y-2 bg-gradient-to-br from-gray-400 to-gray-600">
                 <i class="fa-solid fa-gear"></i>
             </div>
+            <span class="dock-badge hidden" data-badge="window-ajustes"></span>
             <span class="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-gray-800/90 text-white text-[11px] px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-lg">Ajustes</span>
         </div>
     </div>
@@ -955,6 +1052,7 @@
         <div class="title-bar">
             <div class="flex gap-2 w-16">
                 <button class="w-3.5 h-3.5 rounded-full bg-red-500 hover:bg-red-600 transition" onclick="closeWindow('window-appstore')"></button>
+                <button class="w-3.5 h-3.5 rounded-full bg-yellow-400 hover:bg-yellow-500 transition" onclick="minimizeWindow('window-appstore')" title="Minimizar"></button>
             </div>
             <div class="font-bold text-sm text-gray-700">EC Tienda</div>
             <div class="w-16"></div>
@@ -1055,6 +1153,7 @@
         <div class="title-bar bg-white border-b border-gray-200">
             <div class="flex gap-2 w-16">
                 <button class="w-3.5 h-3.5 rounded-full bg-red-500 hover:bg-red-600 transition" onclick="closeWindow('window-ajustes')"></button>
+                <button class="w-3.5 h-3.5 rounded-full bg-yellow-400 hover:bg-yellow-500 transition" onclick="minimizeWindow('window-ajustes')" title="Minimizar"></button>
             </div>
             <div class="font-bold text-sm text-gray-800">Ajustes</div>
             <div class="w-16"></div>
@@ -1147,6 +1246,7 @@
         <div class="title-bar">
             <div class="flex gap-2 w-16">
                 <button class="w-3.5 h-3.5 rounded-full bg-red-500 hover:bg-red-600 transition" onclick="closeWindow('window-music')"></button>
+                <button class="w-3.5 h-3.5 rounded-full bg-yellow-400 hover:bg-yellow-500 transition" onclick="minimizeWindow('window-music')" title="Minimizar"></button>
             </div>
             <div class="font-bold text-sm text-gray-700">EC Music Pro</div>
             <div class="w-16"></div>
@@ -1243,6 +1343,7 @@
         <div class="title-bar">
             <div class="flex gap-2 w-16">
                 <button class="w-3.5 h-3.5 rounded-full bg-red-500 hover:bg-red-600 transition" onclick="closeWindow('window-video')"></button>
+                <button class="w-3.5 h-3.5 rounded-full bg-yellow-400 hover:bg-yellow-500 transition" onclick="minimizeWindow('window-video')" title="Minimizar"></button>
             </div>
             <div class="font-bold text-sm text-gray-700" id="video-win-title">EC Video Pro</div>
             <div class="w-16"></div>
@@ -1398,6 +1499,7 @@
         <div class="title-bar">
             <div class="flex gap-2 w-16">
                 <button class="w-3.5 h-3.5 rounded-full bg-red-500 hover:bg-red-600 transition shadow-sm border border-red-600/20" onclick="closeWindow('window-libreoffice')"></button>
+                <button class="w-3.5 h-3.5 rounded-full bg-yellow-400 hover:bg-yellow-500 transition shadow-sm border border-yellow-600/20" onclick="minimizeWindow('window-libreoffice')" title="Minimizar"></button>
                 <button class="w-3.5 h-3.5 rounded-full bg-yellow-400 shadow-sm border border-yellow-500/20 hidden md:block"></button>
                 <button class="w-3.5 h-3.5 rounded-full bg-green-500 shadow-sm border border-green-600/20 hidden md:block"></button>
             </div>
@@ -1651,6 +1753,7 @@
         <div class="title-bar bg-gray-800 text-white border-none">
             <div class="flex gap-2 w-16">
                 <button class="w-3.5 h-3.5 rounded-full bg-red-500 hover:bg-red-400 transition" onclick="closeWindow('window-notepad')"></button>
+                <button class="w-3.5 h-3.5 rounded-full bg-yellow-400 hover:bg-yellow-400 transition" onclick="minimizeWindow('window-notepad')" title="Minimizar"></button>
                 <button class="w-3.5 h-3.5 rounded-full bg-yellow-400 hidden md:block"></button>
                 <button class="w-3.5 h-3.5 rounded-full bg-green-500 hidden md:block"></button>
             </div>
@@ -1694,6 +1797,7 @@ iniciarConexion("192.168.1.100");</textarea>
         <div class="title-bar">
             <div class="flex gap-2 w-16">
                 <button class="w-3.5 h-3.5 rounded-full bg-red-500 hover:bg-red-600 transition" onclick="closeWindow('window-calc')"></button>
+                <button class="w-3.5 h-3.5 rounded-full bg-yellow-400 hover:bg-yellow-500 transition" onclick="minimizeWindow('window-calc')" title="Minimizar"></button>
             </div>
             <div class="font-bold text-sm text-gray-700">Calculadora</div>
             <div class="w-16"></div>
@@ -1737,8 +1841,7 @@ iniciarConexion("192.168.1.100");</textarea>
         <div class="title-bar">
             <div class="flex gap-2 w-16">
                 <button class="w-3.5 h-3.5 rounded-full bg-red-500 hover:bg-red-600 transition" onclick="closeWindow('window-img-editor')"></button>
-                <button class="w-3.5 h-3.5 rounded-full bg-yellow-400 hidden md:block"></button>
-                <button class="w-3.5 h-3.5 rounded-full bg-green-500 hidden md:block"></button>
+                <button class="w-3.5 h-3.5 rounded-full bg-yellow-400 hover:bg-yellow-500 transition" onclick="minimizeWindow('window-img-editor')" title="Minimizar"></button>
             </div>
             <div class="font-bold text-sm text-gray-700 truncate">EC Studio Pro</div>
             <div class="w-16"></div>
@@ -1756,13 +1859,16 @@ iniciarConexion("192.168.1.100");</textarea>
             <button onclick="setImgTool('eraser')" id="tool-eraser" class="img-tool-btn" title="Borrador"><i class="fa-solid fa-eraser"></i></button>
             <button onclick="setImgTool('text')" id="tool-text" class="img-tool-btn" title="Texto"><i class="fa-solid fa-font"></i></button>
             <button onclick="setImgTool('shape')" id="tool-shape" class="img-tool-btn" title="Formas"><i class="fa-solid fa-shapes"></i></button>
-            <button onclick="setImgTool('eyedropper')" id="tool-eyedropper" class="img-tool-btn" title="Selector de Color"><i class="fa-solid fa-eye-dropper"></i></button>
+            <button onclick="setImgTool('fill')" id="tool-fill" class="img-tool-btn" title="Relleno de color (F)"><i class="fa-solid fa-fill-drip"></i></button>
+            <button onclick="setImgTool('eyedropper')" id="tool-eyedropper" class="img-tool-btn" title="Selector de Color (I)"><i class="fa-solid fa-eye-dropper"></i></button>
             <div class="w-px h-6 bg-gray-200 mx-1"></div>
             <div class="flex items-center gap-1">
                 <label class="text-[10px] font-bold text-gray-500 hidden md:inline">Color:</label>
                 <input type="color" id="img-draw-color" value="#ff0000" class="w-7 h-7 rounded cursor-pointer border-0">
                 <input type="range" id="img-brush-size" min="1" max="50" value="3" class="w-16 h-1 accent-red-500" title="Tamaño de pincel">
                 <span id="img-brush-val" class="text-[10px] text-gray-500 w-5">3</span>
+                <input type="range" id="img-opacity" min="0" max="100" value="100" class="w-14 h-1 accent-red-500" title="Opacidad" oninput="imgOpacity=parseInt(this.value); document.getElementById('img-opacity-val').textContent=this.value+'%';">
+                <span id="img-opacity-val" class="text-[10px] text-gray-500 w-8">100%</span>
             </div>
             <div class="w-px h-6 bg-gray-200 mx-1 hidden md:block"></div>
             <!-- Formas disponibles -->
@@ -1791,6 +1897,17 @@ iniciarConexion("192.168.1.100");</textarea>
                 <label class="flex items-center gap-1 text-[10px] text-gray-500">
                     <input type="checkbox" id="img-text-bold" class="accent-red-500"> <b>B</b>
                 </label>
+                <input type="text" id="img-text-input" placeholder="Escribe aquí..." class="w-36 text-[11px] border border-gray-200 rounded px-2 py-0.5" onkeydown="if(event.key==='Enter')event.preventDefault();">
+                <button onclick="imgRemoveText()" class="img-tool-btn text-red-500" title="Quitar último texto"><i class="fa-solid fa-eraser"></i> Quitar</button>
+            </div>
+            <!-- Opciones de recorte -->
+            <div class="hidden md:flex items-center gap-1" id="crop-options" style="display:none;">
+                <span class="text-[10px] font-bold text-gray-500">Proporción:</span>
+                <button class="img-tool-btn crop-aspect-btn active-aspect" data-aspect="free" onclick="setCropAspect('free')">Libre</button>
+                <button class="img-tool-btn crop-aspect-btn" data-aspect="1:1" onclick="setCropAspect('1:1')">1:1</button>
+                <button class="img-tool-btn crop-aspect-btn" data-aspect="4:3" onclick="setCropAspect('4:3')">4:3</button>
+                <button class="img-tool-btn crop-aspect-btn" data-aspect="16:9" onclick="setCropAspect('16:9')">16:9</button>
+                <button class="img-tool-btn crop-aspect-btn" data-aspect="3:2" onclick="setCropAspect('3:2')">3:2</button>
             </div>
             <div class="flex-grow"></div>
             <div class="flex items-center gap-1">
@@ -1800,6 +1917,7 @@ iniciarConexion("192.168.1.100");</textarea>
                 <button onclick="imgZoomIn()" class="img-tool-btn" title="Acercar"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
                 <button onclick="imgZoomOut()" class="img-tool-btn" title="Alejar"><i class="fa-solid fa-magnifying-glass-minus"></i></button>
                 <button onclick="imgFitToView()" class="img-tool-btn" title="Ajustar"><i class="fa-solid fa-expand"></i></button>
+                <button id="img-compare" class="img-tool-btn" title="Comparar antes/después (mantener pulsado)" onmousedown="imgCompareDown()" onmouseup="imgCompareUp()" onmouseleave="imgCompareUp()" ontouchstart="imgCompareDown()" ontouchend="imgCompareUp()"><i class="fa-solid fa-eye"></i></button>
                 <span id="img-zoom-label" class="text-[10px] font-mono text-gray-400 w-10 text-center">100%</span>
             </div>
         </div>
@@ -1862,7 +1980,7 @@ iniciarConexion("192.168.1.100");</textarea>
                     </div>
                     <div>
                         <label class="text-[10px] font-bold text-gray-500 flex justify-between mb-0.5">Rotación libre <span id="val-freeRotate">0°</span></label>
-                        <input type="range" id="slider-freeRotate" min="-180" max="180" value="0" class="img-slider" oninput="document.getElementById('val-freeRotate').textContent=this.value+'°'; renderImgFinal()">
+                        <input type="range" id="slider-freeRotate" min="-180" max="180" value="0" class="img-slider" oninput="imgFreeRotate(this.value);"> 
                     </div>
                     <div class="border-t border-gray-100 pt-2">
                         <h4 class="text-[10px] font-bold text-gray-400 uppercase mb-2">Redimensionar</h4>
@@ -1887,7 +2005,7 @@ iniciarConexion("192.168.1.100");</textarea>
                 <!-- Botones Inferiores -->
                 <div class="mt-auto p-3 border-t border-gray-100 flex gap-1.5 bg-gray-50">
                     <button onclick="resetImgEditor()" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-600 py-2 rounded-lg font-bold text-[11px] transition border-0" title="Limpiar todo"><i class="fa-solid fa-broom"></i> Limpiar</button>
-                    <button onclick="saveImgEditor()" class="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white py-2 rounded-lg font-bold text-[11px] transition border-0 shadow-sm" title="Exportar imagen"><i class="fa-solid fa-download"></i> Exportar</button>
+                    <button onclick="openExportModal()" class="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white py-2 rounded-lg font-bold text-[11px] transition border-0 shadow-sm" title="Exportar imagen"><i class="fa-solid fa-download"></i> Exportar</button>
                 </div>
             </div>
 
@@ -2288,15 +2406,152 @@ iniciarConexion("192.168.1.100");</textarea>
 
         // --- 3. Sistema de Ventanas (Touch/Mouse) ---
         let zIndexCounter = 100;
+        const minimizedWindows = {};
+        const animatingWindows = {};
+        function getDockIcon(id) {
+            const badge = document.querySelector(`[data-badge="${id}"]`);
+            return badge ? badge.closest('.group')?.querySelector('.ios-icon') : null;
+        }
+        function bounceDockIcon(id) {
+            const icon = getDockIcon(id);
+            if (!icon) return;
+            icon.classList.remove('dock-bounce');
+            void icon.offsetWidth;
+            icon.classList.add('dock-bounce');
+            setTimeout(() => icon.classList.remove('dock-bounce'), 600);
+        }
         function openWindow(id) { 
+            if (minimizedWindows[id]) { restoreWindow(id); return; }
             playOpen();
             const win = document.getElementById(id); 
+            if (!win) return;
+            if (win.style.display !== 'flex') {
+                win.classList.remove('window-opening');
+                void win.offsetWidth;
+                win.classList.add('window-opening');
+            }
             win.style.display = 'flex'; 
             bringToFront(win); 
         }
-        function closeWindow(id) { 
+        function minimizeWindow(id) { 
+            const win = document.getElementById(id); 
+            if (!win || win.style.display === 'none' || animatingWindows[id] || minimizedWindows[id]) return;
+            animatingWindows[id] = true;
             playClose();
-            document.getElementById(id).style.display = 'none'; 
+            const icon = getDockIcon(id);
+            const winRect = win.getBoundingClientRect();
+            const dockRect = icon ? icon.getBoundingClientRect() : {left: window.innerWidth/2, top: window.innerHeight - 30, width: 56, height: 56};
+            const dx = (dockRect.left + dockRect.width/2) - (winRect.left + winRect.width/2);
+            const dy = (dockRect.top + dockRect.height/2) - (winRect.top + winRect.height/2);
+            win.classList.remove('window-opening');
+            win.style.animation = 'none';
+            win.classList.add('is-animating');
+            win.style.transition = 'transform 0.42s cubic-bezier(0.32, 0.72, 0, 1), opacity 0.32s ease, border-radius 0.42s ease';
+            win.style.transformOrigin = 'center center';
+            // force reflow before transform
+            void win.offsetWidth;
+            win.style.transform = `translate(${dx}px, ${dy}px) scale(0.08)`;
+            win.style.opacity = '0';
+            win.style.borderRadius = '18px';
+            if (icon) bounceDockIcon(id);
+            setTimeout(() => {
+                win.style.display = 'none';
+                win.style.transform = '';
+                win.style.opacity = '';
+                win.style.transition = '';
+                win.style.borderRadius = '';
+                win.style.animation = '';
+                win.classList.remove('is-animating');
+                minimizedWindows[id] = true;
+                setDockBadge(id, true);
+                animatingWindows[id] = false;
+            }, 420);
+        }
+        function restoreWindow(id) { 
+            const win = document.getElementById(id); 
+            if (!win || animatingWindows[id]) return;
+            if (!minimizedWindows[id]) { openWindow(id); return; }
+            animatingWindows[id] = true;
+            playOpen();
+            const icon = getDockIcon(id);
+            // prepare window at dock position then animate to normal
+            win.classList.remove('window-opening');
+            win.style.animation = 'none';
+            win.style.display = 'flex';
+            bringToFront(win);
+            win.classList.add('is-animating');
+            const targetRect = win.getBoundingClientRect();
+            const dockRect = icon ? icon.getBoundingClientRect() : {left: window.innerWidth/2, top: window.innerHeight - 30, width: 56, height: 56};
+            const dx = (dockRect.left + dockRect.width/2) - (targetRect.left + targetRect.width/2);
+            const dy = (dockRect.top + dockRect.height/2) - (targetRect.top + targetRect.height/2);
+            win.style.transition = 'none';
+            win.style.transform = `translate(${dx}px, ${dy}px) scale(0.08)`;
+            win.style.opacity = '0';
+            win.style.borderRadius = '18px';
+            // force reflow
+            void win.offsetWidth;
+            win.style.transition = 'transform 0.45s cubic-bezier(0.32, 0.72, 0, 1), opacity 0.36s ease, border-radius 0.45s ease';
+            win.style.transform = 'translate(0, 0) scale(1)';
+            win.style.opacity = '1';
+            if (icon) bounceDockIcon(id);
+            // hide badge immediately with small delay for pop reverse
+            setDockBadge(id, false);
+            setTimeout(() => {
+                win.style.transform = '';
+                win.style.opacity = '';
+                win.style.transition = '';
+                win.style.borderRadius = '';
+                win.style.animation = '';
+                win.classList.remove('is-animating');
+                delete minimizedWindows[id];
+                animatingWindows[id] = false;
+            }, 460);
+        }
+        function cleanupMinimized(id) {
+            delete minimizedWindows[id];
+            setDockBadge(id, false);
+        }
+        function toggleFromDock(id) {
+            if (animatingWindows[id]) return;
+            if (minimizedWindows[id]) { restoreWindow(id); return; }
+            const w = document.getElementById(id);
+            if (w && w.style.display === 'flex') { bringToFront(w); return; }
+            openWindow(id);
+        }
+        function setDockBadge(id, show) {
+            const badge = document.querySelector(`[data-badge="${id}"]`);
+            if (!badge) return;
+            if (show) {
+                badge.classList.remove('hidden');
+                badge.classList.remove('show');
+                void badge.offsetWidth;
+                badge.classList.add('show');
+            } else {
+                badge.classList.add('hidden');
+                badge.classList.remove('show');
+            }
+        }
+        function closeWindow(id) { 
+            const win = document.getElementById(id);
+            if (!win) return;
+            if (animatingWindows[id]) return;
+            playClose();
+            // if minimized, just cleanup
+            if (minimizedWindows[id]) { cleanupMinimized(id); return; }
+            // ensure no opening animation interferes
+            win.classList.remove('window-opening');
+            win.style.animation = 'none';
+            // fade out quickly
+            win.style.transition = 'transform 0.2s ease, opacity 0.2s ease';
+            win.style.transform = 'scale(0.92)';
+            win.style.opacity = '0';
+            setTimeout(() => {
+                win.style.display = 'none';
+                win.style.transform = '';
+                win.style.opacity = '';
+                win.style.transition = '';
+                cleanupMinimized(id);
+            }, 200);
         }
         function bringToFront(element) { zIndexCounter++; element.style.zIndex = zIndexCounter; }
 
@@ -2330,6 +2585,67 @@ iniciarConexion("192.168.1.100");</textarea>
             titleBar.addEventListener('touchstart', dragStart, {passive: true});
             document.addEventListener('touchmove', dragMove, {passive: true});
             document.addEventListener('touchend', dragEnd);
+        });
+
+        // --- 3b. Resize tipo macOS (bordes y esquinas) ---
+        document.querySelectorAll('.window').forEach(win => {
+            const dirs = ['n','s','e','w','ne','nw','se','sw'];
+            dirs.forEach(dir => {
+                const h = document.createElement('div');
+                h.className = 'resize-handle resize-handle-' + dir;
+                h.dataset.dir = dir;
+                win.appendChild(h);
+                let isResizing = false, startX, startY, startW, startH, startL, startT, curDir;
+                function rsStart(e) {
+                    if (window.innerWidth <= 768) return;
+                    e.preventDefault(); e.stopPropagation();
+                    bringToFront(win);
+                    isResizing = true; curDir = dir;
+                    const cx = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+                    const cy = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+                    startX = cx; startY = cy;
+                    startW = win.offsetWidth; startH = win.offsetHeight;
+                    startL = win.offsetLeft; startT = win.offsetTop;
+                    document.body.classList.add('resizing');
+                    document.body.style.cursor = getComputedStyle(h).cursor;
+                }
+                function rsMove(e) {
+                    if (!isResizing) return;
+                    const cx = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+                    const cy = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+                    const dx = cx - startX, dy = cy - startY;
+                    let newW = startW, newH = startH, newL = startL, newT = startT;
+                    if (curDir.includes('e')) newW = startW + dx;
+                    if (curDir.includes('w')) { newW = startW - dx; newL = startL + dx; }
+                    if (curDir.includes('s')) newH = startH + dy;
+                    if (curDir.includes('n')) { newH = startH - dy; newT = startT + dy; }
+                    const minW = 300, minH = 200;
+                    if (newW < minW) { if (curDir.includes('w')) newL -= (minW - newW); newW = minW; }
+                    if (newH < minH) { if (curDir.includes('n')) newT -= (minH - newH); newH = minH; }
+                    if (newL < 0) { newW += newL; newL = 0; }
+                    if (newT < 0) { newH += newT; newT = 0; }
+                    const maxW = window.innerWidth - newL - 8;
+                    const maxH = window.innerHeight - newT - 8;
+                    if (newW > maxW) newW = maxW;
+                    if (newH > maxH) newH = maxH;
+                    win.style.width = newW + 'px';
+                    win.style.height = newH + 'px';
+                    win.style.left = newL + 'px';
+                    win.style.top = newT + 'px';
+                }
+                function rsEnd() {
+                    if (!isResizing) return;
+                    isResizing = false;
+                    document.body.classList.remove('resizing');
+                    document.body.style.cursor = '';
+                }
+                h.addEventListener('mousedown', rsStart);
+                document.addEventListener('mousemove', rsMove);
+                document.addEventListener('mouseup', rsEnd);
+                h.addEventListener('touchstart', rsStart, {passive: false});
+                document.addEventListener('touchmove', rsMove, {passive: false});
+                document.addEventListener('touchend', rsEnd);
+            });
         });
 
         // --- 4. Navegación Links Externos ---
@@ -2883,11 +3199,15 @@ iniciarConexion("192.168.1.100");</textarea>
             grayscale: 0, sepia: 0, blur: 0, hue: 0, invert: 0,
             rotate: 0, flipH: 1, flipV: 1, freeRotate: 0
         };
+        const NEUTRAL_IMG_ST = JSON.parse(JSON.stringify(imgSt));
         let imgZoom = 1;
         let imgTool = 'select';
         let imgHistory = [];
         let imgHistoryIdx = -1;
         const MAX_HISTORY = 30;
+        let imgOpacity = 100;
+        let cropAspect = 'free';
+        let renderPending = false;
 
         // Drawing state
         let isDrawing = false;
@@ -2965,13 +3285,15 @@ iniciarConexion("192.168.1.100");</textarea>
             // Show/hide shape/text options
             document.getElementById('shape-options').style.display = tool === 'shape' ? 'flex' : 'none';
             document.getElementById('text-options').style.display = tool === 'text' ? 'flex' : 'none';
-            // Show/hide crop apply/cancel buttons
+            // Show/hide crop options + apply/cancel buttons
+            const cropOpts = document.getElementById('crop-options');
             const cropApply = document.getElementById('btn-crop-apply');
             const cropCancel = document.getElementById('btn-crop-cancel');
+            if (cropOpts) cropOpts.style.display = tool === 'crop' ? 'flex' : 'none';
             cropApply.style.display = tool === 'crop' ? 'flex' : 'none';
             cropCancel.style.display = tool === 'crop' ? 'flex' : 'none';
             // Canvas cursor
-            if (tool === 'draw' || tool === 'eraser') {
+            if (tool === 'draw' || tool === 'eraser' || tool === 'fill' || tool === 'eyedropper') {
                 cvs.style.cursor = 'crosshair';
                 cvs.style.pointerEvents = 'auto';
             } else if (tool === 'crop') {
@@ -2979,9 +3301,8 @@ iniciarConexion("192.168.1.100");</textarea>
             } else if (tool === 'text') {
                 cvs.style.cursor = 'text';
                 cvs.style.pointerEvents = 'auto';
-            } else if (tool === 'eyedropper') {
-                cvs.style.cursor = 'crosshair';
-                cvs.style.pointerEvents = 'auto';
+                const ti = document.getElementById('img-text-input');
+                if (ti) { ti.focus(); ti.select(); }
             } else {
                 cvs.style.cursor = 'default';
                 cvs.style.pointerEvents = 'none';
@@ -3010,11 +3331,21 @@ iniciarConexion("192.168.1.100");</textarea>
         // --- Filters ---
         const filterUnits = { brightness: '%', contrast: '%', saturation: '%', grayscale: '%', sepia: '%', blur: 'px', hue: '°', invert: '%', exposure: '', temperature: '', sharpen: '', vignette: '', noise: '', gamma: '' };
 
+        // Debounced render using requestAnimationFrame (avoids blocking UI on large images)
+        function scheduleRender() {
+            if (renderPending) return;
+            renderPending = true;
+            requestAnimationFrame(() => {
+                renderPending = false;
+                renderImgFinal();
+            });
+        }
+
         function updateImgFilter(f, v) {
             imgSt[f] = parseFloat(v);
             const unit = filterUnits[f] || '';
             document.getElementById(`val-${f}`).textContent = `${v}${unit}`;
-            renderImgFinal();
+            scheduleRender();
         }
 
         // --- Filter presets ---
@@ -3039,7 +3370,7 @@ iniciarConexion("192.168.1.100");</textarea>
                 const vl = document.getElementById('val-' + k);
                 if (vl) vl.textContent = p[k] + (filterUnits[k] || '');
             });
-            renderImgFinal();
+            scheduleRender();
         }
 
         // --- Transform ---
@@ -3050,6 +3381,12 @@ iniciarConexion("192.168.1.100");</textarea>
             if (t === 'flipV') imgSt.flipV *= -1;
             renderImgFinal();
             saveHistory();
+        }
+
+        function imgFreeRotate(v) {
+            imgSt.freeRotate = parseFloat(v);
+            document.getElementById('val-freeRotate').textContent = v + '°';
+            scheduleRender();
         }
 
         // --- Resize ---
@@ -3207,7 +3544,7 @@ iniciarConexion("192.168.1.100");</textarea>
             textLayer.forEach(t => {
                 ctx.font = `${t.bold ? 'bold ' : ''}${t.size}px ${t.font}`;
                 ctx.fillStyle = t.color;
-                ctx.globalAlpha = 1;
+                ctx.globalAlpha = (t.alpha !== undefined ? t.alpha : 1);
                 ctx.fillText(t.text, t.x, t.y);
             });
 
@@ -3237,7 +3574,8 @@ iniciarConexion("192.168.1.100");</textarea>
             imgHistory.push({
                 dataUrl: tempCvs.toDataURL(),
                 filters: JSON.parse(JSON.stringify(imgSt)),
-                textLayer: JSON.parse(JSON.stringify(textLayer))
+                textLayer: JSON.parse(JSON.stringify(textLayer)),
+                drawLayer: drawLayer ? drawLayer.toDataURL() : null
             });
             if (imgHistory.length > MAX_HISTORY) imgHistory.shift();
             imgHistoryIdx = imgHistory.length - 1;
@@ -3272,8 +3610,23 @@ iniciarConexion("192.168.1.100");</textarea>
                     const vl = document.getElementById('val-' + k);
                     if (vl) vl.textContent = imgSt[k] + (filterUnits[k] || '');
                 });
-                if (drawLayer) { drawCtx.clearRect(0, 0, drawLayer.width, drawLayer.height); }
-                renderImgFinal();
+                // Restore draw layer
+                drawLayer = null; drawCtx = null;
+                if (state.drawLayer) {
+                    const dl = new Image();
+                    dl.onload = () => {
+                        if (!drawLayer) {
+                            drawLayer = document.createElement('canvas');
+                            drawLayer.width = cvs.width; drawLayer.height = cvs.height;
+                            drawCtx = drawLayer.getContext('2d');
+                        }
+                        drawCtx.drawImage(dl, 0, 0);
+                        renderImgFinal();
+                    };
+                    dl.src = state.drawLayer;
+                } else {
+                    renderImgFinal();
+                }
             };
             i.src = state.dataUrl;
         }
@@ -3309,6 +3662,7 @@ iniciarConexion("192.168.1.100");</textarea>
                 lastX = coords.x; lastY = coords.y;
                 drawCtx.beginPath();
                 drawCtx.moveTo(lastX, lastY);
+                drawCtx.globalAlpha = imgOpacity / 100;
                 if (imgTool === 'eraser') {
                     drawCtx.globalCompositeOperation = 'destination-out';
                     drawCtx.lineWidth = parseInt(document.getElementById('img-brush-size').value) * 2;
@@ -3322,13 +3676,15 @@ iniciarConexion("192.168.1.100");</textarea>
                 e.preventDefault();
             } else if (imgTool === 'text') {
                 const coords = getCanvasCoords(e);
-                const text = prompt('Escribe el texto:');
-                if (!text) return;
+                const textInput = document.getElementById('img-text-input');
+                const text = (textInput ? textInput.value : '').trim();
+                if (!text) { textInput && textInput.focus(); return; }
                 const font = document.getElementById('img-text-font').value;
                 const size = parseInt(document.getElementById('img-text-size').value) || 24;
                 const bold = document.getElementById('img-text-bold').checked;
                 const color = document.getElementById('img-draw-color').value;
-                textLayer.push({ text, x: coords.x, y: coords.y, font, size, bold, color });
+                textLayer.push({ text, x: coords.x, y: coords.y, font, size, bold, color, alpha: imgOpacity / 100 });
+                if (textInput) textInput.value = '';
                 renderImgFinal();
                 saveHistory();
             } else if (imgTool === 'shape') {
@@ -3336,6 +3692,10 @@ iniciarConexion("192.168.1.100");</textarea>
                 initDrawLayer();
                 isDrawing = true;
                 cropDragStart = { x: coords.x, y: coords.y };
+                e.preventDefault();
+            } else if (imgTool === 'fill') {
+                const coords = getCanvasCoords(e);
+                floodFill(Math.round(coords.x), Math.round(coords.y));
                 e.preventDefault();
             } else if (imgTool === 'eyedropper') {
                 const coords = getCanvasCoords(e);
@@ -3360,12 +3720,14 @@ iniciarConexion("192.168.1.100");</textarea>
                 // Live preview on overlay
                 const coords = getCanvasCoords(e);
                 oCtx.clearRect(0, 0, ovs.width, ovs.height);
+                oCtx.globalAlpha = imgOpacity / 100;
                 oCtx.strokeStyle = document.getElementById('img-draw-color').value;
                 oCtx.lineWidth = parseInt(document.getElementById('img-brush-size').value);
                 oCtx.lineCap = 'round';
                 const shapeType = document.getElementById('img-shape-type').value;
                 const fill = document.getElementById('img-shape-fill').checked;
                 drawShape(oCtx, shapeType, cropDragStart.x, cropDragStart.y, coords.x, coords.y, fill);
+                oCtx.globalAlpha = 1;
                 e.preventDefault();
             }
         }
@@ -3379,16 +3741,69 @@ iniciarConexion("192.168.1.100");</textarea>
                 initDrawLayer();
                 const shapeType = document.getElementById('img-shape-type').value;
                 const fill = document.getElementById('img-shape-fill').checked;
+                drawCtx.globalAlpha = imgOpacity / 100;
                 drawCtx.strokeStyle = document.getElementById('img-draw-color').value;
                 drawCtx.lineWidth = parseInt(document.getElementById('img-brush-size').value);
                 drawCtx.lineCap = 'round';
                 drawShape(drawCtx, shapeType, cropDragStart.x, cropDragStart.y, coords.x || cropDragStart.x, coords.y || cropDragStart.y, fill);
+                drawCtx.globalAlpha = 1;
                 oCtx.clearRect(0, 0, ovs.width, ovs.height);
                 renderImgFinal();
                 saveHistory();
             } else if (imgTool === 'draw' || imgTool === 'eraser') {
                 saveHistory();
             }
+        }
+
+        function hexToRgba(hex, alpha) {
+            let h = hex.replace('#', '');
+            if (h.length === 3) h = h.split('').map(c => c + c).join('');
+            const r = parseInt(h.substring(0, 2), 16);
+            const g = parseInt(h.substring(2, 4), 16);
+            const b = parseInt(h.substring(4, 6), 16);
+            return [r, g, b, Math.round(alpha * 255)];
+        }
+
+        function sameColor(a, b, tol) {
+            tol = tol || 6;
+            return Math.abs(a[0]-b[0]) <= tol && Math.abs(a[1]-b[1]) <= tol &&
+                   Math.abs(a[2]-b[2]) <= tol && Math.abs(a[3]-b[3]) <= tol;
+        }
+
+        // Bucket fill: fills a contiguous color region on the visible image
+        function floodFill(sx, sy) {
+            if (!edImg) return;
+            initDrawLayer();
+            const w = cvs.width, h = cvs.height;
+            if (sx < 0 || sy < 0 || sx >= w || sy >= h) return;
+            let srcData;
+            try { srcData = ctx.getImageData(0, 0, w, h).data; }
+            catch(e) { return; }
+            const base = (sy * w + sx) * 4;
+            const target = [srcData[base], srcData[base+1], srcData[base+2], srcData[base+3]];
+            const fillColor = hexToRgba(document.getElementById('img-draw-color').value, imgOpacity / 100);
+            if (sameColor(target, fillColor)) return;
+
+            const drawImg = drawCtx.getImageData(0, 0, w, h);
+            const d = drawImg.data;
+            const tolerance = 32;
+            const stack = [[sx, sy]];
+            let count = 0;
+            const maxPixels = w * h;
+            while (stack.length && count < maxPixels) {
+                const [px, py] = stack.pop();
+                const idx = (py * w + px) * 4;
+                if (!sameColor([srcData[idx], srcData[idx+1], srcData[idx+2], srcData[idx+3]], target, tolerance)) continue;
+                d[idx] = fillColor[0]; d[idx+1] = fillColor[1]; d[idx+2] = fillColor[2]; d[idx+3] = fillColor[3];
+                count++;
+                if (px > 0) stack.push([px-1, py]);
+                if (px < w-1) stack.push([px+1, py]);
+                if (py > 0) stack.push([px, py-1]);
+                if (py < h-1) stack.push([px, py+1]);
+            }
+            drawCtx.putImageData(drawImg, 0, 0);
+            renderImgFinal();
+            saveHistory();
         }
 
         function drawShape(context, type, x1, y1, x2, y2, fill) {
@@ -3581,6 +3996,23 @@ iniciarConexion("192.168.1.100");</textarea>
             // Ensure minimum size
             if (cropRect.w < 20) cropRect.w = 20;
             if (cropRect.h < 20) cropRect.h = 20;
+            // Enforce aspect ratio if set
+            if (cropAspect && cropAspect !== 'free' && cropHandle && cropHandle !== 'move') {
+                const ratio = cropAspect.split(':').map(Number);
+                const target = ratio[0] / ratio[1];
+                let nw = cropRect.w, nh = cropRect.h;
+                if (nw / nh > target) nw = nh * target; else nh = nw / target;
+                // Keep anchor based on handle
+                const r = cropRect;
+                if (cropHandle.includes('l')) r.x = r.x + (r.w - nw);
+                if (cropHandle.includes('t')) r.y = r.y + (r.h - nh);
+                r.w = nw; r.h = nh;
+                // Clamp to canvas bounds
+                if (r.x < 0) { r.w += r.x; r.x = 0; }
+                if (r.y < 0) { r.h += r.y; r.y = 0; }
+                if (r.x + r.w > cvs.width) r.w = cvs.width - r.x;
+                if (r.y + r.h > cvs.height) r.h = cvs.height - r.y;
+            }
             drawCropOverlay();
         }
 
@@ -3650,6 +4082,36 @@ iniciarConexion("192.168.1.100");</textarea>
             renderImgFinal();
         }
 
+        // Compare before/after (hold button to see original)
+        let imgCompareSaved = null;
+        function imgCompareDown() {
+            if (!edImg || imgCompareSaved) return;
+            imgCompareSaved = JSON.parse(JSON.stringify(imgSt));
+            imgSt = JSON.parse(JSON.stringify(NEUTRAL_IMG_ST));
+            // Sync sliders to neutral
+            Object.keys(imgSt).forEach(k => {
+                const sl = document.getElementById('slider-' + k);
+                if (sl) sl.value = imgSt[k];
+                const vl = document.getElementById('val-' + k);
+                if (vl) vl.textContent = imgSt[k] + (filterUnits[k] || '');
+            });
+            document.getElementById('img-compare').classList.add('active-tool');
+            renderImgFinal();
+        }
+        function imgCompareUp() {
+            if (!imgCompareSaved) return;
+            imgSt = imgCompareSaved;
+            imgCompareSaved = null;
+            Object.keys(imgSt).forEach(k => {
+                const sl = document.getElementById('slider-' + k);
+                if (sl) sl.value = imgSt[k];
+                const vl = document.getElementById('val-' + k);
+                if (vl) vl.textContent = imgSt[k] + (filterUnits[k] || '');
+            });
+            document.getElementById('img-compare').classList.remove('active-tool');
+            renderImgFinal();
+        }
+
         // --- Reset ---
         function resetImgEditor() {
             playClick();
@@ -3672,78 +4134,178 @@ iniciarConexion("192.168.1.100");</textarea>
             renderImgFinal();
         }
 
-        // --- Export ---
-        function saveImgEditor() {
+        // Remove the last added text annotation
+        function imgRemoveText() {
+            if (!textLayer.length) return;
+            textLayer.pop();
             playClick();
+            renderImgFinal();
+            saveHistory();
+        }
+
+        function setCropAspect(val) {
+            cropAspect = val;
+            document.querySelectorAll('#crop-options .crop-aspect-btn').forEach(b => {
+                b.classList.toggle('active-aspect', b.getAttribute('data-aspect') === val);
+            });
+            if (cropActive) {
+                // Re-apply aspect to current crop rect
+                if (val !== 'free') {
+                    const ratio = val.split(':').map(Number);
+                    const target = ratio[0] / ratio[1];
+                    if (cropRect.w / cropRect.h > target) cropRect.h = cropRect.w / target;
+                    else cropRect.w = cropRect.h * target;
+                    drawCropOverlay();
+                }
+            }
+        }
+
+        // --- Export ---
+        function openExportModal() {
             if (!edImg) return;
-            try {
-                // Render final image at full resolution
-                const exportCvs = document.createElement('canvas');
-                const freeRot = parseInt(document.getElementById('slider-freeRotate')?.value || 0);
-                const totalRot = (imgSt.rotate + freeRot) % 360;
-                const swapped = totalRot % 180 !== 0;
-                exportCvs.width = swapped ? edImg.height : edImg.width;
-                exportCvs.height = swapped ? edImg.width : edImg.height;
-                const eCtx = exportCvs.getContext('2d');
+            playClick();
+            const m = document.getElementById('img-export-modal');
+            if (m) m.classList.remove('hidden');
+            // Update quality slider visibility based on format
+            updateExportQualityVis();
+        }
 
-                // Apply filters
-                const brightness = imgSt.brightness * (1 + imgSt.exposure / 200);
-                eCtx.filter = `brightness(${brightness}%) contrast(${imgSt.contrast}%) saturate(${imgSt.saturation}%) grayscale(${imgSt.grayscale}%) sepia(${imgSt.sepia}%) blur(${imgSt.blur}px) hue-rotate(${imgSt.hue}deg) invert(${imgSt.invert}%)`;
+        function closeExportModal() {
+            const m = document.getElementById('img-export-modal');
+            if (m) m.classList.add('hidden');
+        }
 
+        function updateExportQualityVis() {
+            const fmt = document.getElementById('img-export-format').value;
+            const qRow = document.getElementById('img-export-quality-row');
+            if (qRow) qRow.style.display = (fmt === 'png') ? 'none' : 'block';
+        }
+
+        // Render the final image to a canvas at the given scale (1x / 2x)
+        function renderExportCanvas(scale) {
+            const exportCvs = document.createElement('canvas');
+            const freeRot = parseInt(document.getElementById('slider-freeRotate')?.value || 0);
+            const totalRot = (imgSt.rotate + freeRot) % 360;
+            const swapped = totalRot % 180 !== 0;
+            const bw = swapped ? edImg.height : edImg.width;
+            const bh = swapped ? edImg.width : edImg.height;
+            exportCvs.width = Math.round(bw * scale);
+            exportCvs.height = Math.round(bh * scale);
+            const eCtx = exportCvs.getContext('2d');
+
+            // Apply filters
+            const brightness = imgSt.brightness * (1 + imgSt.exposure / 200);
+            eCtx.filter = `brightness(${brightness}%) contrast(${imgSt.contrast}%) saturate(${imgSt.saturation}%) grayscale(${imgSt.grayscale}%) sepia(${imgSt.sepia}%) blur(${imgSt.blur}px) hue-rotate(${imgSt.hue}deg) invert(${imgSt.invert}%)`;
+
+            eCtx.save();
+            eCtx.translate(exportCvs.width / 2, exportCvs.height / 2);
+            if (totalRot) eCtx.rotate(totalRot * Math.PI / 180);
+            eCtx.scale(imgSt.flipH, imgSt.flipV);
+            eCtx.scale(scale, scale);
+            eCtx.drawImage(edImg, -edImg.width / 2, -edImg.height / 2);
+            eCtx.restore();
+            eCtx.filter = 'none';
+
+            // Temperature
+            if (imgSt.temperature !== 0) {
+                eCtx.globalCompositeOperation = 'overlay';
+                eCtx.globalAlpha = Math.abs(imgSt.temperature) / 200;
+                eCtx.fillStyle = imgSt.temperature > 0 ? '#ff8800' : '#0066ff';
+                eCtx.fillRect(0, 0, exportCvs.width, exportCvs.height);
+                eCtx.globalCompositeOperation = 'source-over';
+                eCtx.globalAlpha = 1;
+            }
+
+            // Vignette
+            if (imgSt.vignette > 0) {
+                const grad = eCtx.createRadialGradient(exportCvs.width / 2, exportCvs.height / 2, exportCvs.width * 0.3, exportCvs.width / 2, exportCvs.height / 2, exportCvs.width * 0.7);
+                grad.addColorStop(0, 'transparent');
+                grad.addColorStop(1, `rgba(0,0,0,${imgSt.vignette / 100})`);
+                eCtx.fillStyle = grad;
+                eCtx.fillRect(0, 0, exportCvs.width, exportCvs.height);
+            }
+
+            // Noise
+            if (imgSt.noise > 0) {
+                const imgData = eCtx.getImageData(0, 0, exportCvs.width, exportCvs.height);
+                const d = imgData.data;
+                const intensity = imgSt.noise * 2.55;
+                for (let i = 0; i < d.length; i += 4) {
+                    const n = (Math.random() - 0.5) * intensity;
+                    d[i] += n; d[i + 1] += n; d[i + 2] += n;
+                }
+                eCtx.putImageData(imgData, 0, 0);
+            }
+
+            // Sharpen (relative to scale)
+            if (imgSt.sharpen > 0) {
+                try {
+                    const imgData = eCtx.getImageData(0, 0, exportCvs.width, exportCvs.height);
+                    const src = new Uint8ClampedArray(imgData.data);
+                    const d = imgData.data;
+                    const amt = imgSt.sharpen / 50;
+                    const w = exportCvs.width, h = exportCvs.height;
+                    for (let y = 1; y < h - 1; y++) {
+                        for (let x = 1; x < w - 1; x++) {
+                            const idx = (y * w + x) * 4;
+                            for (let c = 0; c < 3; c++) {
+                                const val = 5 * src[idx + c] -
+                                    src[((y - 1) * w + x) * 4 + c] -
+                                    src[((y + 1) * w + x) * 4 + c] -
+                                    src[(y * w + x - 1) * 4 + c] -
+                                    src[(y * w + x + 1) * 4 + c];
+                                d[idx + c] = Math.min(255, Math.max(0, src[idx + c] + (val - src[idx + c]) * amt));
+                            }
+                        }
+                    }
+                    eCtx.putImageData(imgData, 0, 0);
+                } catch(e) {}
+            }
+
+            // Draw draw layer (scale it up onto the export canvas)
+            if (drawLayer) {
                 eCtx.save();
-                eCtx.translate(exportCvs.width / 2, exportCvs.height / 2);
-                if (totalRot) eCtx.rotate(totalRot * Math.PI / 180);
-                eCtx.scale(imgSt.flipH, imgSt.flipV);
-                eCtx.drawImage(edImg, -edImg.width / 2, -edImg.height / 2);
+                eCtx.scale(scale, scale);
+                eCtx.drawImage(drawLayer, 0, 0);
                 eCtx.restore();
-                eCtx.filter = 'none';
+            }
 
-                // Temperature
-                if (imgSt.temperature !== 0) {
-                    eCtx.globalCompositeOperation = 'overlay';
-                    eCtx.globalAlpha = Math.abs(imgSt.temperature) / 200;
-                    eCtx.fillStyle = imgSt.temperature > 0 ? '#ff8800' : '#0066ff';
-                    eCtx.fillRect(0, 0, exportCvs.width, exportCvs.height);
-                    eCtx.globalCompositeOperation = 'source-over';
-                    eCtx.globalAlpha = 1;
-                }
+            // Draw text
+            textLayer.forEach(t => {
+                eCtx.font = `${t.bold ? 'bold ' : ''}${t.size * scale}px ${t.font}`;
+                eCtx.fillStyle = t.color;
+                eCtx.globalAlpha = (t.alpha !== undefined ? t.alpha : 1);
+                eCtx.fillText(t.text, t.x * scale, t.y * scale);
+            });
+            eCtx.globalAlpha = 1;
 
-                // Vignette
-                if (imgSt.vignette > 0) {
-                    const grad = eCtx.createRadialGradient(exportCvs.width / 2, exportCvs.height / 2, exportCvs.width * 0.3, exportCvs.width / 2, exportCvs.height / 2, exportCvs.width * 0.7);
-                    grad.addColorStop(0, 'transparent');
-                    grad.addColorStop(1, `rgba(0,0,0,${imgSt.vignette / 100})`);
-                    eCtx.fillStyle = grad;
-                    eCtx.fillRect(0, 0, exportCvs.width, exportCvs.height);
-                }
+            return exportCvs;
+        }
 
-                // Draw draw layer
-                if (drawLayer) eCtx.drawImage(drawLayer, 0, 0);
-
-                // Draw text
-                textLayer.forEach(t => {
-                    eCtx.font = `${t.bold ? 'bold ' : ''}${t.size}px ${t.font}`;
-                    eCtx.fillStyle = t.color;
-                    eCtx.fillText(t.text, t.x, t.y);
-                });
-
-                // Export as PNG
-                const dataUrl = exportCvs.toDataURL('image/png', 1.0);
-                fetch(dataUrl)
-                    .then(res => res.blob())
-                    .then(blob => {
-                        const blobUrl = window.URL.createObjectURL(blob);
-                        const a = document.createElement('a');
-                        a.style.display = 'none';
-                        a.download = 'EC_Studio_Pro.png';
-                        a.href = blobUrl;
-                        document.body.appendChild(a);
-                        a.click();
-                        setTimeout(() => {
-                            window.URL.revokeObjectURL(blobUrl);
-                            document.body.removeChild(a);
-                        }, 100);
-                    });
+        function downloadExport() {
+            if (!edImg) return;
+            playClick();
+            try {
+                const fmt = document.getElementById('img-export-format').value;
+                const scale = parseFloat(document.getElementById('img-export-scale').value) || 1;
+                const quality = parseInt(document.getElementById('img-export-quality').value) / 100 || 1;
+                const cvs = renderExportCanvas(scale);
+                const mime = { png: 'image/png', jpeg: 'image/jpeg', webp: 'image/webp' }[fmt];
+                const ext = fmt === 'jpeg' ? 'jpg' : fmt;
+                cvs.toBlob(blob => {
+                    if (!blob) { alert("No se pudo exportar. Intenta de nuevo."); return; }
+                    const blobUrl = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
+                    a.download = 'EC_Studio_Pro.' + ext;
+                    a.href = blobUrl;
+                    document.body.appendChild(a);
+                    a.click();
+                    setTimeout(() => {
+                        window.URL.revokeObjectURL(blobUrl);
+                        document.body.removeChild(a);
+                    }, 100);
+                }, mime, fmt === 'png' ? undefined : quality);
             } catch (e) {
                 alert("No se pudo exportar. Intenta de nuevo.");
             }
@@ -3752,12 +4314,26 @@ iniciarConexion("192.168.1.100");</textarea>
         // --- Keyboard shortcuts ---
         document.addEventListener('keydown', e => {
             if (document.getElementById('window-img-editor').style.display !== 'flex') return;
+            const tag = (e.target && e.target.tagName) || '';
+            const inField = tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || e.target.isContentEditable;
             if (e.ctrlKey && e.key === 'z') { e.preventDefault(); imgUndo(); }
             if (e.ctrlKey && e.key === 'y') { e.preventDefault(); imgRedo(); }
             if (e.key === 'Escape' && cropActive) cancelCrop();
             if (e.key === 'Enter' && cropActive) applyCrop();
             if (e.key === '+' || e.key === '=') { if (e.ctrlKey) { e.preventDefault(); imgZoomIn(); } }
             if (e.key === '-') { if (e.ctrlKey) { e.preventDefault(); imgZoomOut(); } }
+            // Tool switching (ignore when typing)
+            if (inField) return;
+            const k = e.key.toLowerCase();
+            if (k === 'b') setImgTool('draw');
+            else if (k === 'e') setImgTool('eraser');
+            else if (k === 't') setImgTool('text');
+            else if (k === 's') setImgTool('shape');
+            else if (k === 'c') setImgTool('crop');
+            else if (k === 'i') setImgTool('eyedropper');
+            else if (k === 'f') setImgTool('fill');
+            else if (k === 'v') setImgTool('select');
+            else if (k === '0') imgFitToView();
         });
 
         // Mouse wheel zoom on canvas

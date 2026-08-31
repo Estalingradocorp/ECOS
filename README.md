@@ -20,7 +20,7 @@ Un sistema operativo completo basado en navegador, construido en un solo archivo
 | App | Descripción | Funciones destacadas |
 |-----|-------------|---------------------|
 | **EC Office Pro** | Procesador de texto estilo LibreOffice | Sistema de páginas A4, tablas, buscar/reemplazar, emojis, subtítulos, exportar a HTML/PDF/DOC/Markdown/TXT, auto-guardado |
-| **EC Studio Pro** | Editor de imágenes profesional | Recortar, dibujar, texto, formas, eyedropper, deshacer/rehacer, zoom, rotación, 8 filtros, 9 ajustes de imagen |
+| **EC Studio Pro** | Editor de imágenes profesional | Recortar (con proporciones 1:1/4:3/16:9/3:2), dibujar, formas, relleno de color, texto inline, eyedropper, opacidad, deshacer/rehacer, zoom, rotación, 8 filtros, 9 ajustes, exportar PNG/JPEG/WebP con calidad y escala |
 | **EC Music Pro** | Reproductor de música moderno | Playlist, shuffle, repetir, ecualizador animado, drag & drop, atajos de teclado |
 | **EC Video Pro** | Reproductor de video completo | Soporte MP4/WebM/MOV, subtítulos, velocidad, screenshot, PiP, atajos estilo VLC |
 | **TV en Vivo** | 30+ canales IPTV gratuitos | Noticias, deportes, entretenimiento, música. Añadir streams propios |
@@ -67,6 +67,24 @@ Un sistema operativo completo basado en navegador, construido en un solo archivo
 | `Shift+←` | Pista anterior |
 | `S` | Aleatorio (shuffle) |
 | `R` | Modo repetir |
+
+### EC Studio Pro
+| Atajo | Acción |
+|-------|--------|
+| `Ctrl+Z` | Deshacer |
+| `Ctrl+Y` | Rehacer |
+| `Escape` | Cancelar recorte |
+| `Enter` | Aplicar recorte |
+| `Ctrl++` / `Ctrl+-` | Zoom in / out |
+| `B` | Pincel |
+| `E` | Borrador |
+| `T` | Texto |
+| `S` | Formas |
+| `C` | Recortar |
+| `I` | Cuentagotas |
+| `F` | Relleno |
+| `V` | Seleccionar |
+| `0` | Ajustar a la vista |
 
 ## Tecnologías utilizadas
 

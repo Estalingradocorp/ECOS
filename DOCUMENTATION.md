@@ -24,6 +24,7 @@ EC-OS/
 │       ├── eccode-calc-qr.js # Módulos 6–8: ECCode, Calculadora, QR
 │       ├── studio.js         # Módulo 9: EC Studio Pro
 │       ├── tasks-passgen.js  # Módulos 10–11: Tareas, PassGen
+│       ├── storage.js        # Persistencia de medios (IndexedDB)
 │       ├── music.js          # Módulo 12: EC Music Pro
 │       └── video-tv.js       # Módulos 13–14: EC Video Pro, TV en Vivo
 ├── .github/workflows/deploy.yml  # GitHub Pages (Actions)
@@ -43,6 +44,7 @@ EC-OS/
 | `eccode-calc-qr.js` | 6–8 | Editor de código, calculadora, generador QR |
 | `studio.js` | 9 | Editor de imágenes (canvas, filtros, recorte, exportación) |
 | `tasks-passgen.js` | 10–11 | Tareas, generador de contraseñas |
+| `storage.js` | – | Persistencia de medios en **IndexedDB** (`MediaStore`) |
 | `music.js` | 12 | Reproductor de música (playlist, ecualizador) |
 | `video-tv.js` | 13–14 | Reproductor de video + TV en vivo IPTV |
 
@@ -60,6 +62,24 @@ EC-OS/
 | **PrismJS 1.29** | Resaltado de sintaxis (ECCode) |
 | **QRCode.js 1.0** | Generación de códigos QR |
 | **html2pdf.js 0.10** | Exportación a PDF (html2canvas + jsPDF) |
+| **IndexedDB** | Persistencia local de canciones y videos (`MediaStore`) |
+
+---
+
+### 1.4 Persistencia de medios (módulo `storage.js`)
+
+El módulo `MediaStore` usa **IndexedDB** para guardar los archivos de audio y video que el usuario añade, de forma que **siguen disponibles al recargar o reabrir EC OS**.
+
+| Método | Descripción |
+|--------|-------------|
+| `MediaStore.save(entry)` | Guarda `{ name, blob, type }` y devuelve el id asignado |
+| `MediaStore.all()` | Devuelve todos los archivos guardados |
+| `MediaStore.remove(id)` | Borra un archivo por su id |
+| `MediaStore.clear()` | Borra todos los archivos |
+
+**¿Por qué IndexedDB y no `localStorage`?** `localStorage` está limitado a ~5 MB y no puede almacenar blobs grandes. IndexedDB no tiene ese límite práctico y permite guardar archivos de audio/video completos, requisito para conservar las playlist.
+
+> **Uso:** Música (`music.js`) y Video (`video-tv.js`) guardan cada archivo al añadirlo, lo restauran al abrir (`loadSavedPlaylist` / `vidLoadSavedPlaylist`) y lo borran con el botón ✕ de cada pista (`removeTrack` / `vidRemoveTrack`).
 
 ---
 
@@ -354,11 +374,18 @@ Reproductor moderno con playlist y ecualizador visual animado.
 | Función | Descripción |
 |---------|-------------|
 | `addFilesToPlaylist(files)` | Añade archivos de audio |
+| `persistFiles(files)` | Guarda los archivos en **IndexedDB** (`MediaStore`) |
+| `loadSavedPlaylist()` | Restaura las canciones guardadas al abrir la app |
+| `deleteStoredTrack(track)` | Borra la canción de IndexedDB |
 | `updatePlaylistUI()` | Renderiza la lista |
-| `removeTrack(index)` | Elimina una pista |
+| `removeTrack(index)` | Elimina una pista (también de almacenamiento) |
 | `resetPlayerUI()` | Reinicia el reproductor |
 
 **Carga de archivos**: input de archivo + **drag & drop** sobre la zona de soltar.
+
+> **Persistencia:** las canciones añadidas se guardan automáticamente en el almacenamiento del navegador (IndexedDB) y **se mantienen entre sesiones**. El botón ✕ de cada pista las elimina también del almacenamiento. Un icono 💾 junto al nombre indica que la pista está guardada en el dispositivo, y el contador muestra «X pistas · Y guardadas».
+
+> **Reanudación:** EC Music Pro guarda la pista actual, la posición de reproducción, el modo aleatorio, el modo de repetición y el volumen en `localStorage` (`ec_music_state`). Al reabrir la app, reanuda la reproducción **donde la dejaste** (cada 3 s y al pausar/cambiar de pista). Al cerrar la ventana la música solo se pausa (ya no se reinicia a 0:00), de modo que puedes cerrar y reabrir sin perder el avance.
 
 #### Reproducción
 | Función | Descripción |
@@ -399,10 +426,17 @@ Reproductor completo estilo VLC con controles avanzados y overlay de mensajes.
 | Función | Descripción |
 |---------|-------------|
 | `vidAddFiles(files)` | Añade archivos de video (MP4/WebM/MOV) |
+| `vidPersistFiles(files)` | Guarda los archivos en **IndexedDB** (`MediaStore`) |
+| `vidLoadSavedPlaylist()` | Restaura los videos guardados al abrir la app |
+| `vidDeleteStored(item)` | Borra el video de IndexedDB |
 | `vidUpdatePlaylistUI()` | Renderiza la lista |
-| `vidRemoveTrack(idx)` | Elimina un elemento |
+| `vidRemoveTrack(idx)` | Elimina un elemento (también de almacenamiento) |
 | `vidResetUI()` | Reinicia el reproductor |
 | `vidPlay(idx)` | Reproduce un elemento |
+
+> **Persistencia:** los videos añadidos se guardan automáticamente en el navegador (IndexedDB) y **se mantienen entre sesiones**. El botón ✕ de cada elemento los elimina también del almacenamiento. Un icono 💾 junto al nombre indica que el video está guardado, y el contador de la lista muestra «N (M guardados)».
+
+> **Reanudación:** EC Video Pro guarda la pista actual y la posición de reproducción en `localStorage` (`ec_video_state`). Al reabrir la app reanuda el video **donde lo dejaste** (cada 3 s y al pausar/cambiar de video). Al cerrar la ventana el video solo se pausa (ya no se reinicia a 0:00).
 
 #### Reproducción y controles
 | Función | Descripción |

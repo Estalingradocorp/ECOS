@@ -25,6 +25,52 @@
         let shuffleMode = false;
         let repeatMode = 0; // 0=off, 1=all, 2=one
         let shuffleOrder = [];
+        let pendingResumeTime = null;
+        let lastStateSave = 0;
+        const musicStateKey = 'ec_music_state';
+
+        function saveMusicState() {
+            try {
+                localStorage.setItem(musicStateKey, JSON.stringify({
+                    index: currentTrackIndex,
+                    time: audioPlayer.currentTime || 0,
+                    shuffle: shuffleMode,
+                    repeat: repeatMode,
+                    volume: audioPlayer.volume
+                }));
+            } catch (e) {}
+        }
+
+        function restoreMusicState() {
+            try {
+                const raw = localStorage.getItem(musicStateKey);
+                if (!raw) return null;
+                const st = JSON.parse(raw);
+                if (typeof st.volume === 'number') {
+                    audioPlayer.volume = Math.max(0, Math.min(1, st.volume));
+                    musicVolume.value = audioPlayer.volume * 100;
+                }
+                if (st.shuffle) { shuffleMode = true; buildShuffleOrder(); }
+                repeatMode = st.repeat || 0;
+                syncShuffleUI();
+                syncRepeatUI();
+                return st;
+            } catch (e) { return null; }
+        }
+
+        function syncShuffleUI() {
+            btnShuffle.classList.toggle('text-white/90', shuffleMode);
+            btnShuffle.classList.toggle('text-white/40', !shuffleMode);
+        }
+
+        function syncRepeatUI() {
+            btnRepeat.classList.toggle('text-white/90', repeatMode > 0);
+            btnRepeat.classList.toggle('text-white/40', repeatMode === 0);
+            btnRepeat.style.position = repeatMode === 2 ? 'relative' : '';
+            btnRepeat.innerHTML = repeatMode === 2
+                ? '<i class="fa-solid fa-repeat text-[10px]"></i><span class="absolute -bottom-0.5 -right-0.5 text-[7px] font-bold text-white/90">1</span>'
+                : '<i class="fa-solid fa-repeat"></i>';
+        }
 
         // Gradient palettes for cover art
         const coverGradients = [
@@ -39,23 +85,61 @@
         audioInput.addEventListener('change', function(e) {
             const files = Array.from(e.target.files);
             if (!files.length) return;
-            addFilesToPlaylist(files);
+            persistFiles(files).then(saved => addFilesToPlaylist(files, saved));
             audioInput.value = '';
         });
 
-        function addFilesToPlaylist(files) {
+        function addFilesToPlaylist(files, savedEntries) {
+            const audioFiles = Array.from(files).filter(f => f.type.startsWith('audio/'));
+            if (!audioFiles.length) return;
             const startIdx = playlist.length;
-            files.forEach(file => {
-                if (!file.type.startsWith('audio/')) return;
+            audioFiles.forEach((file, i) => {
+                const saved = savedEntries && savedEntries[i];
                 playlist.push({
-                    name: file.name.replace(/\.[^/.]+$/, ''),
+                    name: file.name ? file.name.replace(/\.[^/.]+$/, '') : (saved ? saved.name : 'Pista'),
                     url: URL.createObjectURL(file),
-                    duration: '--:--'
+                    duration: '--:--',
+                    storeId: saved ? saved.id : null
                 });
             });
-            if (playlist.length === startIdx) return;
             updatePlaylistUI();
             if (currentTrackIndex === -1) playTrack(startIdx);
+        }
+
+        async function persistFiles(files) {
+            const saved = [];
+            for (const file of Array.from(files)) {
+                if (!file.type.startsWith('audio/')) continue;
+                const name = file.name.replace(/\.[^/.]+$/, '');
+                try {
+                    const id = await MediaStore.save({ name, blob: file, type: 'audio' });
+                    saved.push({ id, name });
+                } catch (e) { console.warn('No se pudo guardar audio:', e); }
+            }
+            return saved;
+        }
+
+        function loadSavedPlaylist() {
+            const st = restoreMusicState();
+            MediaStore.all().then(saved => {
+                const audios = saved.filter(e => e.type === 'audio');
+                if (!audios.length) return;
+                audios.forEach(e => {
+                    playlist.push({
+                        name: e.name,
+                        url: URL.createObjectURL(e.blob),
+                        duration: '--:--',
+                        storeId: e.id
+                    });
+                });
+                updatePlaylistUI();
+                if (st && typeof st.index === 'number' && st.index >= 0 && st.index < playlist.length) {
+                    pendingResumeTime = typeof st.time === 'number' ? st.time : 0;
+                    playTrack(st.index);
+                } else if (currentTrackIndex === -1) {
+                    playTrack(0);
+                }
+            }).catch(e => console.warn('No se pudo cargar música:', e));
         }
 
         // --- Drag & Drop ---
@@ -65,12 +149,13 @@
             e.preventDefault();
             musicDropzone.classList.add('hidden');
             const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('audio/'));
-            if (files.length) addFilesToPlaylist(files);
+            if (files.length) persistFiles(files).then(saved => addFilesToPlaylist(files, saved));
         });
 
         // --- Playlist UI ---
         function updatePlaylistUI() {
-            playlistCount.textContent = `${playlist.length} pista${playlist.length !== 1 ? 's' : ''}`;
+            const savedCount = playlist.filter(t => t.storeId != null).length;
+            playlistCount.textContent = `${playlist.length} pista${playlist.length !== 1 ? 's' : ''}${savedCount ? ' · ' + savedCount + ' guardada' + (savedCount !== 1 ? 's' : '') : ''}`;
             if (playlist.length === 0) {
                 playlistItems.innerHTML = '<li class="p-6 text-center text-white/30 text-xs italic">Arrastra archivos de audio o haz clic en <i class="fa-solid fa-plus mx-1"></i> para aÃ±adir</li>';
                 return;
@@ -82,7 +167,7 @@
                 li.className = isPlaying ? 'track-active' : '';
                 li.innerHTML = `
                     <span class="track-num">${isPlaying ? '<i class="fa-solid fa-volume-high animate-pulse"></i>' : (index + 1)}</span>
-                    <span class="track-name">${escapeHtml(track.name)}</span>
+                    <span class="track-name">${escapeHtml(track.name)}${track.storeId != null ? '<i class="fa-solid fa-floppy-disk ml-1 text-[7px] text-white/25" title="Guardado en el dispositivo"></i>' : ''}</span>
                     <span class="track-dur">${track.duration || '--:--'}</span>
                     <span class="track-remove" onclick="event.stopPropagation(); removeTrack(${index})" title="Eliminar"><i class="fa-solid fa-xmark"></i></span>
                 `;
@@ -91,7 +176,14 @@
             });
         }
 
+        function deleteStoredTrack(track) {
+            if (track && track.storeId != null) {
+                MediaStore.remove(track.storeId).catch(e => console.warn('No se pudo borrar audio:', e));
+            }
+        }
+
         function removeTrack(index) {
+            deleteStoredTrack(playlist[index]);
             if (index === currentTrackIndex) {
                 audioPlayer.pause();
                 audioPlayer.src = '';
@@ -141,6 +233,7 @@
             musicGlow.style.background = `${g[0]}33`;
             audioPlayer.play().catch(() => {});
             updatePlaylistUI();
+            saveMusicState();
         }
 
         function togglePlayPause() {
@@ -187,25 +280,15 @@
         // --- Shuffle / Repeat ---
         function toggleShuffle() {
             shuffleMode = !shuffleMode;
-            btnShuffle.classList.toggle('text-white/90', shuffleMode);
-            btnShuffle.classList.toggle('text-white/40', !shuffleMode);
+            syncShuffleUI();
             if (shuffleMode) buildShuffleOrder();
+            saveMusicState();
         }
 
         function toggleRepeat() {
             repeatMode = (repeatMode + 1) % 3;
-            btnRepeat.classList.toggle('text-white/90', repeatMode > 0);
-            btnRepeat.classList.toggle('text-white/40', repeatMode === 0);
-            const icon = btnRepeat.querySelector('i');
-            if (repeatMode === 2) {
-                icon.classList.remove('fa-repeat');
-                icon.classList.add('fa-repeat', 'text-[10px]');
-                btnRepeat.innerHTML = '<i class="fa-solid fa-repeat text-[10px]"></i><span class="absolute -bottom-0.5 -right-0.5 text-[7px] font-bold text-white/90">1</span>';
-                btnRepeat.style.position = 'relative';
-            } else {
-                btnRepeat.innerHTML = '<i class="fa-solid fa-repeat"></i>';
-                btnRepeat.style.position = '';
-            }
+            syncRepeatUI();
+            saveMusicState();
         }
 
         // --- Controls ---
@@ -222,6 +305,7 @@
 
         function updateVolume(val) {
             audioPlayer.volume = val / 100;
+            saveMusicState();
         }
 
         // --- Audio Events ---
@@ -230,6 +314,8 @@
             const pct = (audioPlayer.currentTime / audioPlayer.duration) * 100;
             musicProgress.value = pct;
             musicCurrent.textContent = formatTime(audioPlayer.currentTime);
+            const now = Date.now();
+            if (now - lastStateSave > 3000) { lastStateSave = now; saveMusicState(); }
         });
 
         audioPlayer.addEventListener('loadedmetadata', () => {
@@ -237,6 +323,10 @@
             if (currentTrackIndex >= 0 && playlist[currentTrackIndex]) {
                 playlist[currentTrackIndex].duration = formatTime(audioPlayer.duration);
                 updatePlaylistUI();
+            }
+            if (pendingResumeTime != null) {
+                audioPlayer.currentTime = pendingResumeTime;
+                pendingResumeTime = null;
             }
         });
 
@@ -255,6 +345,7 @@
             musicEq.classList.remove('playing');
             musicCover.style.transform = 'scale(1)';
             musicCover.style.boxShadow = '0 20px 40px rgba(0,0,0,0.3)';
+            saveMusicState();
         });
 
         audioPlayer.addEventListener('ended', () => {
@@ -274,4 +365,7 @@
             if (e.code === 'KeyS' && !e.ctrlKey) toggleShuffle();
             if (e.code === 'KeyR' && !e.ctrlKey) toggleRepeat();
         });
+
+        // Restaurar canciones guardadas al abrir
+        loadSavedPlaylist();
 

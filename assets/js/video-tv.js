@@ -26,11 +26,31 @@
         let vidSpeed = 1;
         let vidControlsTimeout = null;
         let vidSeekDragging = false;
+        let vidResumeTime = null;
+        let vidLastStateSave = 0;
+        const vidStateKey = 'ec_video_state';
+
+        function vidSaveState() {
+            try {
+                localStorage.setItem(vidStateKey, JSON.stringify({
+                    index: vidCurrentIdx,
+                    time: vidEl.currentTime || 0
+                }));
+            } catch (e) {}
+        }
+
+        function vidRestoreState() {
+            try {
+                const raw = localStorage.getItem(vidStateKey);
+                if (!raw) return null;
+                return JSON.parse(raw);
+            } catch (e) { return null; }
+        }
 
         // --- File Input ---
         vidFileInput.addEventListener('change', e => {
             const files = Array.from(e.target.files).filter(f => f.type.startsWith('video/'));
-            if (files.length) vidAddFiles(files);
+            if (files.length) vidPersistFiles(files).then(saved => vidAddFiles(files, saved));
             vidFileInput.value = '';
         });
 
@@ -64,25 +84,60 @@
             e.preventDefault();
             vidDropzone.classList.remove('show');
             const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('video/'));
-            if (files.length) vidAddFiles(files);
+            if (files.length) vidPersistFiles(files).then(saved => vidAddFiles(files, saved));
         });
 
-        function vidAddFiles(files) {
+        function vidAddFiles(files, savedEntries) {
+            const vids = Array.from(files).filter(f => f.type.startsWith('video/') || f.name.match(/\.(mp4|webm|ogg|mov|avi|mkv)$/i));
+            if (!vids.length) return;
             const start = vidPlaylist.length;
-            files.forEach(f => {
-                if (!f.type.startsWith('video/') && !f.name.match(/\.(mp4|webm|ogg|mov|avi|mkv)$/i)) return;
-                vidPlaylist.push({ name: f.name.replace(/\.[^/.]+$/, ''), url: URL.createObjectURL(f), duration: '--:--' });
+            vids.forEach((f, i) => {
+                const saved = savedEntries && savedEntries[i];
+                vidPlaylist.push({ name: f.name ? f.name.replace(/\.[^/.]+$/, '') : (saved ? saved.name : 'Video'), url: URL.createObjectURL(f), duration: '--:--', storeId: saved ? saved.id : null });
             });
-            if (vidPlaylist.length === start) return;
             vidUpdatePlaylistUI();
             if (vidCurrentIdx === -1) vidPlay(start);
             if (vidEmptyState) vidEmptyState.style.display = 'none';
             vidContainer.classList.add('has-video');
         }
 
+        async function vidPersistFiles(files) {
+            const saved = [];
+            for (const f of Array.from(files)) {
+                if (!f.type.startsWith('video/') && !f.name.match(/\.(mp4|webm|ogg|mov|avi|mkv)$/i)) continue;
+                const name = f.name.replace(/\.[^/.]+$/, '');
+                try {
+                    const id = await MediaStore.save({ name, blob: f, type: 'video' });
+                    saved.push({ id, name });
+                } catch (e) { console.warn('No se pudo guardar video:', e); }
+            }
+            return saved;
+        }
+
+        function vidLoadSavedPlaylist() {
+            const st = vidRestoreState();
+            MediaStore.all().then(saved => {
+                const videos = saved.filter(e => e.type === 'video');
+                if (!videos.length) return;
+                videos.forEach(e => {
+                    vidPlaylist.push({ name: e.name, url: URL.createObjectURL(e.blob), duration: '--:--', storeId: e.id });
+                });
+                vidUpdatePlaylistUI();
+                if (st && typeof st.index === 'number' && st.index >= 0 && st.index < vidPlaylist.length) {
+                    vidResumeTime = typeof st.time === 'number' ? st.time : 0;
+                    vidPlay(st.index);
+                } else if (vidCurrentIdx === -1) {
+                    vidPlay(0);
+                }
+                if (vidEmptyState) vidEmptyState.style.display = 'none';
+                vidContainer.classList.add('has-video');
+            }).catch(e => console.warn('No se pudo cargar video:', e));
+        }
+
         // --- Playlist UI ---
         function vidUpdatePlaylistUI() {
-            vidPlaylistCount.textContent = vidPlaylist.length;
+            const savedVid = vidPlaylist.filter(i => i.storeId != null).length;
+            vidPlaylistCount.textContent = savedVid ? `${vidPlaylist.length} (${savedVid} guardados)` : vidPlaylist.length;
             if (!vidPlaylist.length) {
                 vidPlaylistItems.innerHTML = '<div class="p-6 text-center text-white/20 text-xs">Arrastra archivos de video o haz clic en <i class="fa-solid fa-plus mx-1"></i></div>';
                 return;
@@ -93,7 +148,7 @@
                 div.className = 'video-playlist-item' + (i === vidCurrentIdx ? ' active' : '');
                 div.innerHTML = `
                     <span class="vp-num">${i === vidCurrentIdx ? '<i class="fa-solid fa-play text-[9px]"></i>' : (i+1)}</span>
-                    <span class="vp-name">${escapeHtml(item.name)}</span>
+                    <span class="vp-name">${escapeHtml(item.name)}${item.storeId != null ? '<i class="fa-solid fa-floppy-disk ml-1 text-[7px] text-white/25" title="Guardado en el dispositivo"></i>' : ''}</span>
                     <span class="vp-dur">${item.duration}</span>
                     <span class="vp-remove" onclick="event.stopPropagation(); vidRemoveTrack(${i})" title="Eliminar"><i class="fa-solid fa-xmark"></i></span>
                 `;
@@ -102,7 +157,14 @@
             });
         }
 
+        function vidDeleteStored(item) {
+            if (item && item.storeId != null) {
+                MediaStore.remove(item.storeId).catch(e => console.warn('No se pudo borrar video:', e));
+            }
+        }
+
         function vidRemoveTrack(idx) {
+            vidDeleteStored(vidPlaylist[idx]);
             if (idx === vidCurrentIdx) {
                 vidEl.pause();
                 vidEl.src = '';
@@ -145,6 +207,7 @@
             if (vidEmptyState) vidEmptyState.style.display = 'none';
             vidUpdatePlaylistUI();
             vidEl.play().catch(() => {});
+            vidSaveState();
         }
 
         function vidTogglePlay() {
@@ -212,6 +275,8 @@
             vidSeek.value = pct * 1000;
             vidSeekProgress.style.width = (pct * 100) + '%';
             vidTimeCurrent.textContent = vidFormatTime(vidEl.currentTime);
+            const now = Date.now();
+            if (now - vidLastStateSave > 3000) { vidLastStateSave = now; vidSaveState(); }
         });
 
         vidEl.addEventListener('loadedmetadata', () => {
@@ -219,6 +284,10 @@
             if (vidCurrentIdx >= 0 && vidPlaylist[vidCurrentIdx]) {
                 vidPlaylist[vidCurrentIdx].duration = vidFormatTime(vidEl.duration);
                 vidUpdatePlaylistUI();
+            }
+            if (vidResumeTime != null) {
+                vidEl.currentTime = vidResumeTime;
+                vidResumeTime = null;
             }
         });
 
@@ -238,6 +307,7 @@
         vidEl.addEventListener('pause', () => {
             vidPlayIcon.classList.replace('fa-pause', 'fa-play');
             vidContainer.classList.add('paused');
+            vidSaveState();
         });
 
         vidEl.addEventListener('ended', () => {
@@ -514,4 +584,7 @@
 
         // Initialize TV panel hidden
         if (tvPanel) tvPanel.classList.add('hidden');
+
+        // Restaurar videos guardados al abrir
+        vidLoadSavedPlaylist();
 

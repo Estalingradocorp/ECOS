@@ -418,10 +418,10 @@
         function stopWindowMedia(id) {
             if (id === 'window-music') {
                 const a = document.getElementById('audio-player');
-                if (a) { a.pause(); a.currentTime = 0; }
+                if (a) a.pause();
             } else if (id === 'window-video') {
                 const v = document.getElementById('video-player');
-                if (v) { v.pause(); v.currentTime = 0; }
+                if (v) v.pause();
             }
         }
         function closeWindow(id) { 

@@ -12,7 +12,7 @@ Un sistema operativo completo basado en navegador, inspirado en iPadOS/macOS con
 - **Modo oscuro global** que afecta todas las ventanas y componentes
 - **Pantalla de carga animada** con barra de progreso y mensajes de estado
 - **Sistema de sonido UI** moderno con diferentes tonos para abrir/cerrar ventanas
-- **24 fondos de pantalla** (fotos de Unsplash + gradientes sólidos)
+- **29 fondos de pantalla** (fotos de Unsplash + **Saturno 4K de NASA** + gradientes sólidos)
 - **Responsive** — funciona en desktop, tablet y móvil
 - **Persistencia** — preferencias en localStorage y archivos de audio/video en IndexedDB (se mantienen entre sesiones), con reanudación de reproducción
 

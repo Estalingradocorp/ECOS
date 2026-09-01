@@ -126,7 +126,9 @@ Sintetiza efectos de sonido en tiempo real con la **Web Audio API** (sin archivo
 
 ### 2.7 Fondos de pantalla
 
-`changeWallpaper(url)` — aplica un fondo seleccionado. Incluye **24 opciones**: fotos de Unsplash + gradientes sólidos. Se persiste en `localStorage`.
+`changeWallpaper(url)` — aplica un fondo seleccionado. Incluye **29 opciones**: fotos de Unsplash + **4 fondos 4K de Saturno (NASA)** + gradientes sólidos. Se persiste en `localStorage`.
+
+> **Saturno 4K:** los fondos de Saturno se sirven desde el catálogo de imágenes de la NASA (`images-assets.nasa.gov`) en su resolución original (hasta 9000×3500), con una miniatura ligera en la galería (`~medium.jpg`/`~small.jpg`) y la versión completa en 4K al aplicarla (`~orig.jpg`).
 
 ### 2.8 Sistema de ventanas (módulo 3, en `core.js`)
 
@@ -719,6 +721,10 @@ open index.html   # (o doble clic / iniciar http-server)
 ---
 
 ## 8. Registro de cambios
+
+### 8.3 Fondos de pantalla Saturno 4K
+- Se añadieron **4 fondos de Saturno en 4K** desde el catálogo oficial de **NASA** (`images-assets.nasa.gov`): «El día que la Tierra sonrió» (PIA17172, 9000×3500), «Equinoccio» (PIA11667, 7227×3847), «Cuatro años» (PIA11141) y «Anillos helados» (PIA08389).
+- La galería usa miniaturas ligeras y aplica la imagen **original en 4K** (`~orig.jpg`) al elegir fondo.
 
 ### 8.2 Carátula y luz neon en EC Music Pro
 - La **carátula circular** muestra la **imagen incrustada** de la canción (ID3/APIC vía `jsmediatags`) cuando existe.

@@ -516,7 +516,7 @@
     </div>
 
     <!-- Ventana: EC Music Pro -->
-    <div id="window-music" class="window md:w-[400px] md:h-[620px]" style="top: 80px; left: 350px;">
+    <div id="window-music" class="window md:w-[400px] md:h-[540px]" style="top: 80px; left: 350px;">
         <div class="title-bar">
             <div class="flex gap-2 w-16">
                 <button class="w-3.5 h-3.5 rounded-full bg-red-500 hover:bg-red-600 transition" onclick="closeWindow('window-music')"></button>
@@ -564,6 +564,7 @@
 
             <!-- Controls -->
             <div class="flex justify-center items-center gap-5 mb-2 md:mb-4">
+                <button onclick="toggleMusicDrawer()" class="text-white/40 hover:text-white/80 transition text-sm active:scale-90" title="Lista de reproducción"><i class="fa-solid fa-list-ul"></i></button>
                 <button onclick="toggleShuffle()" id="btn-shuffle" class="text-white/40 hover:text-white/80 transition text-sm active:scale-90" title="Aleatorio"><i class="fa-solid fa-shuffle"></i></button>
                 <button onclick="prevTrack()" class="text-white/70 hover:text-white transition text-xl active:scale-90"><i class="fa-solid fa-backward-step"></i></button>
                 <button onclick="togglePlayPause()" class="w-14 h-14 rounded-full bg-white shadow-lg flex items-center justify-center hover:scale-105 transition active:scale-95" id="music-play-btn"><i class="fa-solid fa-play text-gray-900 text-xl ml-0.5" id="music-play-icon"></i></button>
@@ -594,37 +595,36 @@
                 <div class="eq-bar w-[3px] bg-gradient-to-t from-purple-500 to-pink-500 rounded-full" style="height:11px"></div>
             </div>
 
-            <!-- Listas -->
-            <div class="px-3 pt-2 border-t border-white/10 flex-shrink-0">
-                <div class="flex items-center gap-1.5">
-                    <i class="fa-solid fa-list text-white/40 text-[11px]"></i>
-                    <select id="music-playlist-select" onchange="onPlaylistChange()" class="flex-grow min-w-0 bg-white/5 border border-white/10 rounded-lg px-2 py-1.5 text-[11px] text-white/80 outline-none focus:border-blue-500/50">
-                        <option value="library">Biblioteca</option>
-                    </select>
-                    <button onclick="createPlaylist()" class="w-6 h-6 rounded-md bg-white/10 hover:bg-white/20 flex items-center justify-center text-white/60 hover:text-white transition text-xs flex-shrink-0" title="Nueva lista"><i class="fa-solid fa-square-plus"></i></button>
-                    <button onclick="deleteCurrentPlaylist()" class="w-6 h-6 rounded-md bg-white/10 hover:bg-white/20 flex items-center justify-center text-white/60 hover:text-white transition text-xs flex-shrink-0" title="Eliminar lista"><i class="fa-solid fa-trash-can"></i></button>
-                </div>
-            </div>
-
-            <!-- Playlist header -->
-            <div class="px-4 py-1.5 flex justify-between items-center flex-shrink-0">
-                <span id="playlist-title" class="text-[11px] font-bold text-white/50 uppercase tracking-wider">Lista de Reproducción</span>
-                <div class="flex items-center gap-2">
-                    <span id="playlist-count" class="text-[10px] text-white/30">0 pistas</span>
-                    <button onclick="document.getElementById('audio-upload-input').click()" class="w-6 h-6 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white/60 hover:text-white transition text-xs" title="Añadir"><i class="fa-solid fa-plus"></i></button>
-                </div>
-            </div>
-
-            <!-- Playlist -->
-            <ul id="playlist-items" class="flex-grow min-h-0 overflow-y-auto m-0 p-0 list-none px-2 pb-2">
-                <li class="p-6 text-center text-white/30 text-xs italic">Arrastra archivos de audio o haz clic en <i class="fa-solid fa-plus mx-1"></i> para añadir</li>
-            </ul>
-
-            <!-- Menu para añadir canción a una lista -->
-            <div id="music-pl-menu" class="hidden fixed z-[70] min-w-[160px] max-w-[210px] bg-[#1a1a2e] border border-white/10 rounded-xl shadow-2xl py-1 text-xs"></div>
-
             <audio id="audio-player" class="hidden"></audio>
         </div>
+    </div>
+
+    <!-- Drawer: Lista de música (lateral izquierdo) -->
+    <div id="music-drawer-backdrop" class="hidden fixed inset-0 bg-black/50" style="z-index:480" onclick="closeMusicDrawer()"></div>
+    <div id="music-drawer" class="fixed top-0 left-0 h-full w-[320px] max-w-[88vw] shadow-2xl flex flex-col" style="background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%); z-index:500; transform: translateX(-105%); transition: transform 0.3s ease;">
+        <div class="px-4 py-3 flex items-center justify-between border-b border-white/10 flex-shrink-0">
+            <span class="text-xs font-bold text-white/70 uppercase tracking-wider flex items-center gap-2"><i class="fa-solid fa-music text-rose-400"></i> Lista de Reproducción</span>
+            <button onclick="closeMusicDrawer()" class="w-7 h-7 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center text-white/60 hover:text-white transition text-xs"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="px-3 py-2 flex items-center gap-1.5 border-b border-white/10 flex-shrink-0">
+            <i class="fa-solid fa-list text-white/40 text-[11px]"></i>
+            <select id="music-playlist-select" onchange="onPlaylistChange()" class="flex-grow min-w-0 bg-white/5 border border-white/10 rounded-lg px-2 py-1.5 text-[11px] text-white/80 outline-none focus:border-blue-500/50">
+                <option value="library">Biblioteca</option>
+            </select>
+            <button onclick="createPlaylist()" class="w-6 h-6 rounded-md bg-white/10 hover:bg-white/20 flex items-center justify-center text-white/60 hover:text-white transition text-xs flex-shrink-0" title="Nueva lista"><i class="fa-solid fa-square-plus"></i></button>
+            <button onclick="deleteCurrentPlaylist()" class="w-6 h-6 rounded-md bg-white/10 hover:bg-white/20 flex items-center justify-center text-white/60 hover:text-white transition text-xs flex-shrink-0" title="Eliminar lista"><i class="fa-solid fa-trash-can"></i></button>
+        </div>
+        <div class="px-4 py-1.5 flex justify-between items-center flex-shrink-0">
+            <span id="playlist-title" class="text-[11px] font-bold text-white/50 uppercase tracking-wider">Lista de Reproducción</span>
+            <div class="flex items-center gap-2">
+                <span id="playlist-count" class="text-[10px] text-white/30">0 pistas</span>
+                <button onclick="document.getElementById('audio-upload-input').click()" class="w-6 h-6 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white/60 hover:text-white transition text-xs" title="Añadir"><i class="fa-solid fa-plus"></i></button>
+            </div>
+        </div>
+        <ul id="playlist-items" class="flex-grow min-h-0 overflow-y-auto m-0 p-0 list-none px-2 pb-2">
+            <li class="p-6 text-center text-white/30 text-xs italic">Arrastra archivos de audio o haz clic en <i class="fa-solid fa-plus mx-1"></i> para añadir</li>
+        </ul>
+        <div id="music-pl-menu" class="hidden fixed min-w-[160px] max-w-[210px] bg-[#1a1a2e] border border-white/10 rounded-xl shadow-2xl py-1 text-xs" style="z-index:520"></div>
     </div>
 
     <!-- Ventana: EC Video Pro -->

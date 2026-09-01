@@ -210,6 +210,30 @@
             saveMusicState();
         }
 
+        function toggleMusicDrawer() {
+            const d = document.getElementById('music-drawer');
+            if (!d) return;
+            if (d.style.transform === 'translateX(0px)' || d.classList.contains('open')) closeMusicDrawer();
+            else openMusicDrawer();
+        }
+
+        function openMusicDrawer() {
+            const d = document.getElementById('music-drawer');
+            const b = document.getElementById('music-drawer-backdrop');
+            if (!d) return;
+            d.classList.add('open');
+            d.style.transform = 'translateX(0)';
+            if (b) b.classList.remove('hidden');
+        }
+
+        function closeMusicDrawer() {
+            const d = document.getElementById('music-drawer');
+            const b = document.getElementById('music-drawer-backdrop');
+            if (d) { d.classList.remove('open'); d.style.transform = 'translateX(-105%)'; }
+            if (b) b.classList.add('hidden');
+            hideAddMenu();
+        }
+
         function openAddMenu(ev, index) {
             ev.stopPropagation();
             const track = playlist[index];
@@ -405,6 +429,19 @@
             const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('audio/'));
             if (files.length) persistFiles(files).then(saved => addFilesToPlaylist(files, saved));
         });
+        const musicDrawer = document.getElementById('music-drawer');
+        if (musicDrawer) {
+            musicDrawer.addEventListener('dragover', e => { e.preventDefault(); musicDropzone.classList.remove('hidden'); });
+            musicDrawer.addEventListener('dragleave', e => {
+                if (!musicDrawer.contains(e.relatedTarget)) { e.preventDefault(); musicDropzone.classList.add('hidden'); }
+            });
+            musicDrawer.addEventListener('drop', e => {
+                e.preventDefault();
+                musicDropzone.classList.add('hidden');
+                const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('audio/'));
+                if (files.length) persistFiles(files).then(saved => addFilesToPlaylist(files, saved));
+            });
+        }
 
         // --- Playlist UI ---
         function updatePlaylistUI() {
@@ -432,7 +469,7 @@
                     ${addBtn}
                     <span class="track-remove" onclick="event.stopPropagation(); removeTrack(${index})" title="Eliminar"><i class="fa-solid fa-xmark"></i></span>
                 `;
-                li.onclick = () => playTrack(index);
+                li.onclick = () => { playTrack(index); closeMusicDrawer(); };
                 playlistItems.appendChild(li);
             });
         }

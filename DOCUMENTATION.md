@@ -734,11 +734,12 @@ open index.html   # (o doble clic / iniciar http-server)
 
 ## 8. Registro de cambios
 
-### 8.4 Listas de reproducción y arreglo móvil en EC Music Pro
-- **Armar listas:** ahora puedes crear **listas de reproducción nombradas** con el botón `+` del selector. Un menú desplegable permite **añadir/quitar canciones** a cualquier lista desde la Biblioteca (icono de lista 🎵 en cada canción).
+### 8.4 Listas de reproducción y menú lateral en EC Music Pro
+- **Menú lateral desplegable:** la lista de canciones ahora es un **drawer lateral izquierdo** que se abre con el botón 📜 (icono de lista) junto a los controles del reproductor (o pulsando en la carátula/menú). Desde ahí el usuario **selecciona la canción** que quiere escuchar — funciona en PC y móvil (el drawer se adapta al 88% del ancho en pantallas pequeñas).
+- **Armar listas:** puedes crear **listas de reproducción nombradas** con el botón `+` del selector. Un menú desplegable permite **añadir/quitar canciones** a cualquier lista desde la Biblioteca (icono de lista 🎵 en cada canción).
 - **Selector de lista:** cada lista creada guarda sus canciones (referencias por `storeId`) en `localStorage` (`ec_playlists`) y persiste entre sesiones. La lista activa se recuerda al reabrir.
 - **Reproducción por lista:** al seleccionar una lista, solo se muestran y reproducen sus canciones (siguiente/anterior/aleatorio dentro de esa lista). Al eliminarla, las canciones no se borran.
-- **Arreglo móvil:** en pantallas pequeñas la carátula se reduce, se oculta el ecualizador decorativo, y la lista de reproducción **se puede desplegar y seleccionar** (área mínima de 160px + scroll de la ventana).
+- **Arreglo móvil:** la carátula se reduce y el ecualizador decorativo se oculta en pantallas pequeñas; el drawer ocupa casi todo el ancho para tocar las canciones con comodidad.
 
 ### 8.3 Fondos de pantalla Saturno 4K
 - Se añadieron **4 fondos de Saturno en 4K** desde el catálogo oficial de **NASA** (`images-assets.nasa.gov`): «El día que la Tierra sonrió» (PIA17172, 9000×3500), «Equinoccio» (PIA11667, 7227×3847), «Cuatro años» (PIA11141) y «Anillos helados» (PIA08389).

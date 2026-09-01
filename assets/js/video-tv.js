@@ -585,6 +585,9 @@
         // Initialize TV panel hidden
         if (tvPanel) tvPanel.classList.add('hidden');
 
+        // Guardar estado exacto al recargar/cerrar la página
+        window.addEventListener('pagehide', () => vidSaveState());
+
         // Restaurar videos guardados al abrir
         vidLoadSavedPlaylist();
 

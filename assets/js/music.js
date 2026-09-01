@@ -366,6 +366,9 @@
             if (e.code === 'KeyR' && !e.ctrlKey) toggleRepeat();
         });
 
+        // Guardar estado exacto al recargar/cerrar la página
+        window.addEventListener('pagehide', () => saveMusicState());
+
         // Restaurar canciones guardadas al abrir
         loadSavedPlaylist();
 

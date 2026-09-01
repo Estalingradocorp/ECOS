@@ -385,7 +385,7 @@ Reproductor moderno con playlist y ecualizador visual animado.
 
 > **Persistencia:** las canciones añadidas se guardan automáticamente en el almacenamiento del navegador (IndexedDB) y **se mantienen entre sesiones**. El botón ✕ de cada pista las elimina también del almacenamiento. Un icono 💾 junto al nombre indica que la pista está guardada en el dispositivo, y el contador muestra «X pistas · Y guardadas».
 
-> **Reanudación:** EC Music Pro guarda la pista actual, la posición de reproducción, el modo aleatorio, el modo de repetición y el volumen en `localStorage` (`ec_music_state`). Al reabrir la app, reanuda la reproducción **donde la dejaste** (cada 3 s y al pausar/cambiar de pista). Al cerrar la ventana la música solo se pausa (ya no se reinicia a 0:00), de modo que puedes cerrar y reabrir sin perder el avance.
+> **Reanudación:** EC Music Pro guarda la pista actual, la posición de reproducción, el modo aleatorio, el modo de repetición y el volumen en `localStorage` (`ec_music_state`). Al reabrir la app, reanuda la reproducción **donde la dejaste** (cada 3 s, al pausar/cambiar de pista y al recargar/cerrar la página). Al cerrar la ventana la música solo se pausa (ya no se reinicia a 0:00), de modo que puedes cerrar y reabrir sin perder el avance.
 
 #### Reproducción
 | Función | Descripción |
@@ -436,7 +436,7 @@ Reproductor completo estilo VLC con controles avanzados y overlay de mensajes.
 
 > **Persistencia:** los videos añadidos se guardan automáticamente en el navegador (IndexedDB) y **se mantienen entre sesiones**. El botón ✕ de cada elemento los elimina también del almacenamiento. Un icono 💾 junto al nombre indica que el video está guardado, y el contador de la lista muestra «N (M guardados)».
 
-> **Reanudación:** EC Video Pro guarda la pista actual y la posición de reproducción en `localStorage` (`ec_video_state`). Al reabrir la app reanuda el video **donde lo dejaste** (cada 3 s y al pausar/cambiar de video). Al cerrar la ventana el video solo se pausa (ya no se reinicia a 0:00).
+> **Reanudación:** EC Video Pro guarda la pista actual y la posición de reproducción en `localStorage` (`ec_video_state`). Al reabrir la app reanuda el video **donde lo dejaste** (cada 3 s, al pausar/cambiar de video y al recargar/cerrar la página). Al cerrar la ventana el video solo se pausa (ya no se reinicia a 0:00).
 
 #### Reproducción y controles
 | Función | Descripción |

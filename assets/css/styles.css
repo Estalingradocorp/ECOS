@@ -244,6 +244,9 @@
         #playlist-items li .track-remove { color: rgba(255,255,255,0.15); font-size: 11px; padding: 4px; border-radius: 50%; transition: all 0.15s; cursor: pointer; }
         #playlist-items li:hover .track-remove { color: rgba(255,255,255,0.5); }
         #playlist-items li .track-remove:hover { color: #ef4444; background: rgba(239,68,68,0.15); }
+        #playlist-items li .track-add { color: rgba(255,255,255,0.18); font-size: 11px; padding: 4px; border-radius: 50%; transition: all 0.15s; cursor: pointer; flex-shrink: 0; }
+        #playlist-items li:hover .track-add { color: rgba(255,255,255,0.55); }
+        #playlist-items li .track-add:hover { color: #38bdf8; background: rgba(56,189,248,0.15); }
 
         /* ================= MODO OSCURO GLOBAL ================= */
         body.dark-theme .window, 
@@ -717,7 +720,9 @@
         /* --- ADAPTACIONES MÃ“VILES --- */
         @media (max-width: 768px) {
             .window { width: 100% !important; height: 100% !important; top: 0 !important; left: 0 !important; border-radius: 0; border: none; }
-            .title-bar { padding: 16px; padding-top: 30px; } 
+            .title-bar { padding: 16px; padding-top: 30px; }
+            #music-body { overflow-y: auto; -webkit-overflow-scrolling: touch; }
+            #playlist-items { flex: 1 0 auto !important; min-height: 160px; } 
             .title-bar button.bg-red-500, .title-bar button.bg-yellow-400 { width: 20px !important; height: 20px !important; }
             .office-workspace { padding: 10px 0; }
             .office-page { width: 95vw !important; height: auto !important; min-height: 130vw !important; box-shadow: 0 1px 4px rgba(0,0,0,0.2) !important; }

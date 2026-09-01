@@ -534,12 +534,12 @@
             </div>
 
             <!-- Top: Album Art + Info -->
-            <div class="flex flex-col items-center pt-6 pb-4 px-6 relative">
+            <div class="flex flex-col items-center pt-3 md:pt-6 pb-2 md:pb-4 px-4 md:px-6 relative">
                 <!-- Ambient glow -->
-                <div id="music-glow" class="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-64 bg-purple-500/20 rounded-full blur-3xl pointer-events-none transition-all duration-1000"></div>
+                <div id="music-glow" class="absolute top-0 left-1/2 -translate-x-1/2 w-44 h-44 md:w-64 md:h-64 bg-purple-500/20 rounded-full blur-3xl pointer-events-none transition-all duration-1000"></div>
                 
                 <!-- Cover art -->
-                <div id="music-cover" class="relative w-44 h-44 rounded-full shadow-2xl mb-5 flex items-center justify-center overflow-hidden transition-all duration-700" style="background: linear-gradient(135deg, #e94560, #ff6b6b);">
+                <div id="music-cover" class="relative w-32 h-32 sm:w-40 sm:h-40 md:w-44 md:h-44 rounded-full shadow-2xl mb-3 md:mb-5 flex items-center justify-center overflow-hidden transition-all duration-700" style="background: linear-gradient(135deg, #e94560, #ff6b6b);">
                     <i class="fa-solid fa-music text-white/80 text-5xl" id="music-cover-icon"></i>
                     <img id="music-cover-img" class="hidden absolute inset-0 w-full h-full object-cover rounded-full" alt="Carátula">
                     <!-- Neon ring -->
@@ -554,7 +554,7 @@
             </div>
 
             <!-- Progress bar -->
-            <div class="px-6 mb-3">
+            <div class="px-4 md:px-6 mb-2 md:mb-3">
                 <input type="range" id="music-progress" value="0" min="0" max="100" class="music-range w-full" oninput="seekTrack(this.value)">
                 <div class="flex justify-between text-[10px] font-mono text-white/40 mt-1 px-0.5">
                     <span id="music-current">0:00</span>
@@ -563,7 +563,7 @@
             </div>
 
             <!-- Controls -->
-            <div class="flex justify-center items-center gap-5 mb-4">
+            <div class="flex justify-center items-center gap-5 mb-2 md:mb-4">
                 <button onclick="toggleShuffle()" id="btn-shuffle" class="text-white/40 hover:text-white/80 transition text-sm active:scale-90" title="Aleatorio"><i class="fa-solid fa-shuffle"></i></button>
                 <button onclick="prevTrack()" class="text-white/70 hover:text-white transition text-xl active:scale-90"><i class="fa-solid fa-backward-step"></i></button>
                 <button onclick="togglePlayPause()" class="w-14 h-14 rounded-full bg-white shadow-lg flex items-center justify-center hover:scale-105 transition active:scale-95" id="music-play-btn"><i class="fa-solid fa-play text-gray-900 text-xl ml-0.5" id="music-play-icon"></i></button>
@@ -572,14 +572,14 @@
             </div>
 
             <!-- Volume -->
-            <div class="flex items-center gap-2.5 px-6 mb-4">
+            <div class="flex items-center gap-2.5 px-4 md:px-6 mb-2 md:mb-4">
                 <i class="fa-solid fa-volume-low text-white/40 text-xs"></i>
                 <input type="range" id="music-volume" value="80" min="0" max="100" class="music-range flex-grow" oninput="updateVolume(this.value)">
                 <i class="fa-solid fa-volume-high text-white/40 text-xs"></i>
             </div>
 
             <!-- Equalizer bars (decorative, animates when playing) -->
-            <div id="music-eq" class="flex justify-center items-end gap-[3px] h-5 mb-3 opacity-0 transition-opacity duration-300">
+            <div id="music-eq" class="hidden md:flex justify-center items-end gap-[3px] h-5 mb-3 opacity-0 transition-opacity duration-300">
                 <div class="eq-bar w-[3px] bg-gradient-to-t from-purple-500 to-pink-500 rounded-full" style="height:8px"></div>
                 <div class="eq-bar w-[3px] bg-gradient-to-t from-purple-500 to-pink-500 rounded-full" style="height:14px"></div>
                 <div class="eq-bar w-[3px] bg-gradient-to-t from-purple-500 to-pink-500 rounded-full" style="height:6px"></div>
@@ -594,9 +594,21 @@
                 <div class="eq-bar w-[3px] bg-gradient-to-t from-purple-500 to-pink-500 rounded-full" style="height:11px"></div>
             </div>
 
+            <!-- Listas -->
+            <div class="px-3 pt-2 border-t border-white/10 flex-shrink-0">
+                <div class="flex items-center gap-1.5">
+                    <i class="fa-solid fa-list text-white/40 text-[11px]"></i>
+                    <select id="music-playlist-select" onchange="onPlaylistChange()" class="flex-grow min-w-0 bg-white/5 border border-white/10 rounded-lg px-2 py-1.5 text-[11px] text-white/80 outline-none focus:border-blue-500/50">
+                        <option value="library">Biblioteca</option>
+                    </select>
+                    <button onclick="createPlaylist()" class="w-6 h-6 rounded-md bg-white/10 hover:bg-white/20 flex items-center justify-center text-white/60 hover:text-white transition text-xs flex-shrink-0" title="Nueva lista"><i class="fa-solid fa-square-plus"></i></button>
+                    <button onclick="deleteCurrentPlaylist()" class="w-6 h-6 rounded-md bg-white/10 hover:bg-white/20 flex items-center justify-center text-white/60 hover:text-white transition text-xs flex-shrink-0" title="Eliminar lista"><i class="fa-solid fa-trash-can"></i></button>
+                </div>
+            </div>
+
             <!-- Playlist header -->
-            <div class="px-4 py-2 flex justify-between items-center border-t border-white/10">
-                <span class="text-[11px] font-bold text-white/50 uppercase tracking-wider">Lista de Reproducción</span>
+            <div class="px-4 py-1.5 flex justify-between items-center flex-shrink-0">
+                <span id="playlist-title" class="text-[11px] font-bold text-white/50 uppercase tracking-wider">Lista de Reproducción</span>
                 <div class="flex items-center gap-2">
                     <span id="playlist-count" class="text-[10px] text-white/30">0 pistas</span>
                     <button onclick="document.getElementById('audio-upload-input').click()" class="w-6 h-6 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white/60 hover:text-white transition text-xs" title="Añadir"><i class="fa-solid fa-plus"></i></button>
@@ -604,9 +616,12 @@
             </div>
 
             <!-- Playlist -->
-            <ul id="playlist-items" class="flex-grow overflow-y-auto m-0 p-0 list-none px-2 pb-2">
+            <ul id="playlist-items" class="flex-grow min-h-0 overflow-y-auto m-0 p-0 list-none px-2 pb-2">
                 <li class="p-6 text-center text-white/30 text-xs italic">Arrastra archivos de audio o haz clic en <i class="fa-solid fa-plus mx-1"></i> para añadir</li>
             </ul>
+
+            <!-- Menu para añadir canción a una lista -->
+            <div id="music-pl-menu" class="hidden fixed z-[70] min-w-[160px] max-w-[210px] bg-[#1a1a2e] border border-white/10 rounded-xl shadow-2xl py-1 text-xs"></div>
 
             <audio id="audio-player" class="hidden"></audio>
         </div>

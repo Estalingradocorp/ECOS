@@ -375,13 +375,25 @@ Reproductor moderno con playlist y ecualizador visual animado.
 #### Gestión de playlist
 | Función | Descripción |
 |---------|-------------|
-| `addFilesToPlaylist(files)` | Añade archivos de audio |
+| `addFilesToPlaylist(files)` | Añade archivos a la biblioteca |
 | `persistFiles(files)` | Guarda los archivos en **IndexedDB** (`MediaStore`) |
 | `loadSavedPlaylist()` | Restaura las canciones guardadas al abrir la app |
 | `deleteStoredTrack(track)` | Borra la canción de IndexedDB |
-| `updatePlaylistUI()` | Renderiza la lista |
+| `updatePlaylistUI()` | Renderiza la lista actual |
 | `removeTrack(index)` | Elimina una pista (también de almacenamiento) |
 | `resetPlayerUI()` | Reinicia el reproductor |
+
+#### Listas de reproducción
+| Función | Descripción |
+|---------|-------------|
+| `trackKey(track)` | Clave estable de una pista (por `storeId`) |
+| `loadPlaylists()` / `savePlaylists()` | Carga/guarda las listas en `localStorage` (`ec_playlists`) |
+| `renderPlaylistSelector()` | Rellena el selector de listas |
+| `rebuildPlaylistView()` | Recalcula la lista visible según la selección |
+| `onPlaylistChange()` | Cambia la lista activa |
+| `createPlaylist()` / `deleteCurrentPlaylist()` | Crea / elimina una lista |
+| `openAddMenu(ev, index)` | Menú para añadir/quitar la canción a una lista |
+| `removeTrackFromCurrentPlaylist(index)` | Quita la canción de la lista activa |
 
 **Carga de archivos**: input de archivo + **drag & drop** sobre la zona de soltar.
 
@@ -721,6 +733,12 @@ open index.html   # (o doble clic / iniciar http-server)
 ---
 
 ## 8. Registro de cambios
+
+### 8.4 Listas de reproducción y arreglo móvil en EC Music Pro
+- **Armar listas:** ahora puedes crear **listas de reproducción nombradas** con el botón `+` del selector. Un menú desplegable permite **añadir/quitar canciones** a cualquier lista desde la Biblioteca (icono de lista 🎵 en cada canción).
+- **Selector de lista:** cada lista creada guarda sus canciones (referencias por `storeId`) en `localStorage` (`ec_playlists`) y persiste entre sesiones. La lista activa se recuerda al reabrir.
+- **Reproducción por lista:** al seleccionar una lista, solo se muestran y reproducen sus canciones (siguiente/anterior/aleatorio dentro de esa lista). Al eliminarla, las canciones no se borran.
+- **Arreglo móvil:** en pantallas pequeñas la carátula se reduce, se oculta el ecualizador decorativo, y la lista de reproducción **se puede desplegar y seleccionar** (área mínima de 160px + scroll de la ventana).
 
 ### 8.3 Fondos de pantalla Saturno 4K
 - Se añadieron **4 fondos de Saturno en 4K** desde el catálogo oficial de **NASA** (`images-assets.nasa.gov`): «El día que la Tierra sonrió» (PIA17172, 9000×3500), «Equinoccio» (PIA11667, 7227×3847), «Cuatro años» (PIA11141) y «Anillos helados» (PIA08389).

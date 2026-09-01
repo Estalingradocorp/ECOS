@@ -404,12 +404,12 @@
         body.dark-theme .office-select { background: #2d2d2d; color: #e2e8f0; border-color: #475569; }
         body.dark-theme .office-statusbar { background-color: #1e293b !important; border-top-color: #334155 !important; }
         body.dark-theme .office-page { box-shadow: 0 3px 15px rgba(0,0,0,0.6), 0 0 0 1px #555 !important; }
-        body.dark-theme .office-page-editor { color: #e2e8f0; background: #1e1e1e; }
-        body.dark-theme .office-page-editor th { background: #334155; color: #e2e8f0; }
-        body.dark-theme .office-page-editor td, body.dark-theme .office-page-editor th { border-color: #555; }
-        body.dark-theme .office-page-editor blockquote { background: #1e3a5f; color: #93c5fd; }
-        body.dark-theme .office-page-editor a { color: #60a5fa; }
-        body.dark-theme .office-page-editor pre { background: #111; }
+        body.dark-theme .office-page-editor { color: #1a1a1a; background: #ffffff; }
+        body.dark-theme .office-page-editor th { background: #eee; color: #1a1a1a; }
+        body.dark-theme .office-page-editor td, body.dark-theme .office-page-editor th { border-color: #aaa; }
+        body.dark-theme .office-page-editor blockquote { background: #f0f7ff; color: #1e40af; }
+        body.dark-theme .office-page-editor a { color: #0000ee; }
+        body.dark-theme .office-page-editor pre { background: #1e293b; color: #e2e8f0; }
         body.dark-theme .office-page-number { color: #666; }
 
         /* === Toast Notification === */

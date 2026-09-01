@@ -415,11 +415,21 @@
                 badge.classList.remove('show');
             }
         }
+        function stopWindowMedia(id) {
+            if (id === 'window-music') {
+                const a = document.getElementById('audio-player');
+                if (a) { a.pause(); a.currentTime = 0; }
+            } else if (id === 'window-video') {
+                const v = document.getElementById('video-player');
+                if (v) { v.pause(); v.currentTime = 0; }
+            }
+        }
         function closeWindow(id) { 
             const win = document.getElementById(id);
             if (!win) return;
             if (animatingWindows[id]) return;
             playClose();
+            stopWindowMedia(id);
             // if minimized, just cleanup
             if (minimizedWindows[id]) { cleanupMinimized(id); return; }
             // ensure no opening animation interferes

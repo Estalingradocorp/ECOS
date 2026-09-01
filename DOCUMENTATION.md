@@ -1,6 +1,8 @@
 # EC OS — Documentación Técnica y de Usuario
 
-Sistema operativo completo basado en navegador, implementado en un **único archivo HTML** (`index.html`, ~4.600 líneas / ~290 KB). Inspirado en iPadOS/macOS, incluye un escritorio con ventanas arrastrables, modo oscuro, sistema de sonido UI y una suite de 12 aplicaciones de productividad y entretenimiento.
+Sistema operativo completo basado en navegador, inspirado en iPadOS/macOS. Incluye un escritorio con ventanas arrastrables y redimensionables, modo oscuro, sistema de sonido UI y una suite de 12 aplicaciones de productividad y entretenimiento.
+
+El código se organiza en **archivos separados** (HTML, CSS y JavaScript por módulos) para facilitar el mantenimiento, sin herramientas de build y compatible con apertura local (`file://`) y GitHub Pages.
 
 Esta documentación detalla **todas las funciones, características, componentes y atajos** del sistema.
 
@@ -12,38 +14,37 @@ Esta documentación detalla **todas las funciones, características, componentes
 
 ```
 EC-OS/
-├── index.html          # Archivo único (~290KB, ~4.600 líneas)
-│   ├── <head>          # Librerías externas (Tailwind, FontAwesome, PrismJS, QRCode, html2pdf)
-│   ├── <style>         # CSS completo: dark mode, animaciones, glassmorphism, responsive
-│   ├── <body>          # HTML: escritorio, dock, barra de estado, ventanas, modales
-│   └── <script>        # JavaScript: 14 módulos de funcionalidad + sonido
-├── base/
-│   └── index.html      # Versión original de respaldo (~87 KB)
-└── README.md           # Resumen del proyecto
+├── index.html                # Body HTML: escritorio, dock, barra de estado, ventanas, modales
+├── assets/
+│   ├── css/
+│   │   └── styles.css        # Todo el CSS: dark mode, animaciones, glassmorphism, responsive
+│   └── js/
+│       ├── core.js           # Módulos 0–4: sonido, ajustes, carga, reloj, ventanas, resize, navegación
+│       ├── office.js         # Módulo 5: EC Office Pro
+│       ├── eccode-calc-qr.js # Módulos 6–8: ECCode, Calculadora, QR
+│       ├── studio.js         # Módulo 9: EC Studio Pro
+│       ├── tasks-passgen.js  # Módulos 10–11: Tareas, PassGen
+│       ├── music.js          # Módulo 12: EC Music Pro
+│       └── video-tv.js       # Módulos 13–14: EC Video Pro, TV en Vivo
+├── .github/workflows/deploy.yml  # GitHub Pages (Actions)
+├── .gitignore                # Excluye _backup/
+├── README.md                 # Resumen del proyecto
+└── DOCUMENTATION.md          # Este documento
 ```
 
-### 1.2 Módulos JavaScript (orden de definición)
+> **Nota:** el `<head>` de `index.html` enlaza el CSS y los 7 scripts JS externos. Las librerías (Tailwind, FontAwesome, PrismJS, QRCode, html2pdf) se cargan por CDN.
 
-| Nº | Módulo | Líneas aprox. | Descripción |
-|----|--------|---------------|-------------|
-| 0 | Sistema de sonido PRO y Modo Oscuro | 1999–2190 | Audio Web API + toggle dark |
-| – | Almacenamiento local (Settings) | 2148–2190 | Persistencia en `localStorage` |
-| 1 | Pantalla de carga y modal BETA | 2191–2247 | Splash animado |
-| 2 | Reloj iOS | 2248–2259 | Hora de la barra de estado |
-| – | Pantalla completa | 2260–2273 | Fullscreen del navegador |
-| – | Cambiar fondo | 2274–2288 | Selector de wallpaper |
-| 3 | Sistema de ventanas | 2289–2334 | Arrastrar / maximizar / minimizar |
-| 4 | Navegación de enlaces externos | 2335–2351 | Modal de confirmación |
-| 5 | EC Office Pro | 2352–2804 | Procesador de textos completo |
-| 6 | ECCode | 2805–2843 | Editor de código |
-| 7 | Calculadora | 2844–2864 | Calculadora básica |
-| 8 | QR Gen | 2865–2877 | Generador de QR |
-| 9 | EC Studio Pro | 2878–3771 | Editor de imágenes |
-| 10 | Tareas | 3773–3781 | Lista de tareas |
-| 11 | PassGen | 3782–3802 | Generador de contraseñas |
-| 12 | EC Music Pro | 3803–4078 | Reproductor de música |
-| 13 | EC Video Pro | 4080–4464 | Reproductor de video + TV |
-| 14 | TV en Vivo | 4466–4595 | Canales IPTV |
+### 1.2 Módulos JavaScript (organización en archivos)
+
+| Archivo | Módulos | Contenido |
+|---------|---------|-----------|
+| `core.js` | 0–4 | Sonido UI, modo oscuro, ajustes, carga, reloj, fullscreen, fondo, **sistema de ventanas + resize**, navegación |
+| `office.js` | 5 | EC Office Pro (páginas, tablas, exportación, autoguardado) |
+| `eccode-calc-qr.js` | 6–8 | Editor de código, calculadora, generador QR |
+| `studio.js` | 9 | Editor de imágenes (canvas, filtros, recorte, exportación) |
+| `tasks-passgen.js` | 10–11 | Tareas, generador de contraseñas |
+| `music.js` | 12 | Reproductor de música (playlist, ecualizador) |
+| `video-tv.js` | 13–14 | Reproductor de video + TV en vivo IPTV |
 
 ### 1.3 Tecnologías y librerías
 
@@ -107,21 +108,33 @@ Sintetiza efectos de sonido en tiempo real con la **Web Audio API** (sin archivo
 
 `changeWallpaper(url)` — aplica un fondo seleccionado. Incluye **24 opciones**: fotos de Unsplash + gradientes sólidos. Se persiste en `localStorage`.
 
-### 2.8 Sistema de ventanas (módulo 3)
+### 2.8 Sistema de ventanas (módulo 3, en `core.js`)
 
 Gestión de ventanas estilo macOS con **soporte táctil y mouse**:
 
 | Función | Descripción |
 |---------|-------------|
-| `openWindow(id)` | Abre una ventana por ID, reproduce `playOpen()` |
-| `closeWindow(id)` | Cierra la ventana, reproduce `playClose()` |
+| `openWindow(id)` | Abre una ventana por ID; si estaba minimizada, la restaura. Reproduce `playOpen()` |
+| `minimizeWindow(id)` | Minimiza con **efecto genie** (la ventana se encoge hacia su icono en el dock) y muestra el **badge rojo** en el dock. Reproduce `playClose()` |
+| `restoreWindow(id)` | Restaura la ventana desde el dock (animación inversa) y quita el badge |
+| `toggleFromDock(id)` | Alterna desde el dock: restaura si estaba minimizada, trae al frente si está abierta, o la abre |
+| `closeWindow(id)` | Cierra con fade-out y detiene la reproducción de audio/video si aplica |
 | `bringToFront(element)` | Trae al frente (incrementa `zIndexCounter`) |
-| `dragStart(e)` / `dragMove(e)` / `dragEnd()` | Arrastre de la barra de título (mouse y touch) |
+| `setDockBadge(id, show)` | Muestra/oculta el badge rojo de minimizado en el icono del dock |
+| Resize (bordes/esquinas) | 8 handles (`n/s/e/w/ne/nw/se/sw`) redimensionan la ventana como en macOS |
 
-**Controles de ventana** (esquina superior):
+**Controles de ventana** (esquina superior, solo en las apps con icono en el dock):
 - **Cerrar** (rojo)
 - **Minimizar** (amarillo)
-- **Maximizar/expandir** (verde)
+
+**Comportamiento:**
+- Al **minimizar**, la ventana se encoge hacia el icono del dock con animación `cubic-bezier`, el icono rebota y aparece un badge rojo pulsante.
+- Al hacer **clic en el icono del dock**, la ventana se restaura y el badge desaparece.
+- Al **cerrar** la ventana de Música o Video, la reproducción se **pausa y reinicia** (`stopWindowMedia`).
+- Las ventanas se pueden **redimensionar** arrastrando cualquier borde o esquina (mín. 300×200, limitado al viewport).
+- En móvil (≤768px) las ventanas son a pantalla completa y el resize queda desactivado.
+
+> **Nota sobre minimizar:** las apps sin icono en el dock (Tareas, PassGen, QR) no tienen botón de minimizar para no quedar inaccesibles.
 
 ### 2.9 Navegación de enlaces externos (módulo 4)
 
@@ -619,7 +632,7 @@ Lista de tareas simple.
 - `document.execCommand` (usado por EC Office) es una API heredada, pero totalmente compatible con navegadores modernos.
 
 ### Ejecución
-No requiere servidor — abre `index.html` directamente en el navegador.
+No requiere servidor ni build — abre `index.html` directamente en el navegador (los CSS/JS externos se cargan por rutas relativas `assets/`). También se despliega en **GitHub Pages** mediante el workflow `.github/workflows/deploy.yml` (copia `index.html`, `.nojekyll` y `assets/` a `public/`).
 
 ```bash
 git clone https://github.com/nicotips27/EC-OS.git

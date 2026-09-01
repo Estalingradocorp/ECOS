@@ -1,13 +1,14 @@
 # EC OS — Sistema Operativo Web
 
-Un sistema operativo completo basado en navegador, construido en un solo archivo HTML. Inspirado en iPadOS/macOS con diseño moderno, modo oscuro, y una suite completa de aplicaciones de productividad y entretenimiento.
+Un sistema operativo completo basado en navegador, inspirado en iPadOS/macOS con diseño moderno, modo oscuro, y una suite completa de aplicaciones de productividad y entretenimiento. El código se organiza en archivos separados (HTML + CSS + JS por módulos) sin build, compatible con apertura local y GitHub Pages.
 
 ![EC OS](https://64.media.tumblr.com/37c52c25279f877bd0bc2d538626c938/2f8407cc51b2210e-be/s540x810/c379bb3cd18325d6b075e62fd26ffe91f5093ee3.jpg)
 
 ## Características principales
 
 - **Interfaz de escritorio** con grid de apps, dock animado, y fondo de pantalla personalizable
-- **Ventanas arrastrables** con controles estilo macOS (cerrar, minimizar, maximizar)
+- **Ventanas arrastrables y redimensionables** (bordes/esquinas) con controles estilo macOS (cerrar, minimizar)
+- **Minimizar con efecto genie**: la ventana se encoge hacia el dock, el icono rebota y muestra un badge rojo; clic en el dock para restaurar
 - **Modo oscuro global** que afecta todas las ventanas y componentes
 - **Pantalla de carga animada** con barra de progreso y mensajes de estado
 - **Sistema de sonido UI** moderno con diferentes tonos para abrir/cerrar ventanas

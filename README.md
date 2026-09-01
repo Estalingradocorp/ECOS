@@ -14,7 +14,7 @@ Un sistema operativo completo basado en navegador, inspirado en iPadOS/macOS con
 - **Sistema de sonido UI** moderno con diferentes tonos para abrir/cerrar ventanas
 - **24 fondos de pantalla** (fotos de Unsplash + gradientes sólidos)
 - **Responsive** — funciona en desktop, tablet y móvil
-- **Persistencia** — preferencias guardadas en localStorage
+- **Persistencia** — preferencias en localStorage y archivos de audio/video en IndexedDB (se mantienen entre sesiones), con reanudación de reproducción
 
 ## Aplicaciones incluidas
 
@@ -22,9 +22,9 @@ Un sistema operativo completo basado en navegador, inspirado en iPadOS/macOS con
 |-----|-------------|---------------------|
 | **EC Office Pro** | Procesador de texto estilo LibreOffice | Sistema de páginas A4, tablas, buscar/reemplazar, emojis, subtítulos, exportar a HTML/PDF/DOC/Markdown/TXT, auto-guardado |
 | **EC Studio Pro** | Editor de imágenes profesional | Recortar (con proporciones 1:1/4:3/16:9/3:2), dibujar, formas, relleno de color, texto inline, eyedropper, opacidad, deshacer/rehacer, zoom, rotación, 8 filtros, 9 ajustes, exportar PNG/JPEG/WebP con calidad y escala |
-| **EC Music Pro** | Reproductor de música moderno | Playlist, shuffle, repetir, ecualizador animado, drag & drop, atajos de teclado |
-| **EC Video Pro** | Reproductor de video completo | Soporte MP4/WebM/MOV, subtítulos, velocidad, screenshot, PiP, atajos estilo VLC |
-| **TV en Vivo** | 30+ canales IPTV gratuitos | Noticias, deportes, entretenimiento, música. Añadir streams propios |
+| **EC Music Pro** | Reproductor de música moderno | Carátula circular con luz neon dinámica, carátula incrustada o por defecto, playlist, shuffle, repetir, ecualizador animado, drag & drop, persistencia y reanudación |
+| **EC Video Pro** | Reproductor de video completo | Soporte MP4/WebM/MOV, subtítulos, velocidad, screenshot, PiP, persistencia y reanudación, atajos estilo VLC |
+| **TV en Vivo** | 31 canales IPTV gratuitos | Noticias, deportes, entretenimiento, música, infantil. Añadir streams propios |
 | **ECCode** | Editor de código con resaltado | JavaScript, Python, HTML, CSS, SQL, números de línea sincronizados |
 | **Calculadora** | Calculadora completa | Operaciones básicas, raíz cuadrada, inverso, al cuadrado |
 | **QR Creator** | Generador de códigos QR | Generar y descargar QR desde cualquier texto o URL |
@@ -99,6 +99,8 @@ Un sistema operativo completo basado en navegador, inspirado en iPadOS/macOS con
 | **PrismJS 1.29** | Resaltado de sintaxis en ECCode |
 | **QRCode.js 1.0** | Generación de códigos QR |
 | **html2pdf.js 0.10** | Exportación a PDF |
+| **jsmediatags 3.9** | Extracción de carátula incrustada (ID3/APIC) en música |
+| **IndexedDB** | Persistencia local de canciones y videos (`MediaStore`) |
 
 ## Instalación
 
@@ -107,10 +109,12 @@ Un sistema operativo completo basado en navegador, inspirado en iPadOS/macOS con
 3. No se requiere servidor — funciona directamente como archivo local
 
 ```bash
-git clone https://github.com/TU_USUARIO/ec-os.git
-cd ec-os
+git clone https://github.com/Estalingradocorp/ECOS.git
+cd ECOS
 open index.html
 ```
+
+> **Versión en línea (GitHub Pages):** https://Estalingradocorp.github.io/ECOS/
 
 ## Requisitos del navegador
 
@@ -124,14 +128,23 @@ open index.html
 ## Estructura del proyecto
 
 ```
-ec-os/
-├── index.html          # Archivo único (~4600 líneas, ~300KB)
-│   ├── <style>         # CSS completo (dark mode, animaciones, responsive)
-│   ├── <body>          # HTML (ventanas, modales, componentes)
-│   └── <script>        # JavaScript (14 módulos de funcionalidad)
-├── base/
-│   └── index.html      # Versión original de respaldo
-└── README.md           # Este archivo
+EC-OS/
+├── index.html            # HTML: escritorio, dock, ventanas, modales, scripts
+├── assets/
+│   ├── css/styles.css    # Todo el CSS
+│   └── js/
+│       ├── core.js           # Escritorio, ventanas, sonido, ajustes
+│       ├── office.js         # EC Office Pro
+│       ├── eccode-calc-qr.js # ECCode, Calculadora, QR
+│       ├── studio.js         # EC Studio Pro
+│       ├── tasks-passgen.js  # Tareas, PassGen
+│       ├── storage.js        # Persistencia de medios (IndexedDB)
+│       ├── music.js          # EC Music Pro
+│       └── video-tv.js       # EC Video Pro + TV en Vivo
+├── obsidian/             # Notas para bóveda Obsidian
+├── .github/workflows/deploy.yml  # GitHub Pages
+├── README.md             # Este archivo
+└── DOCUMENTATION.md      # Documentación técnica y de usuario
 ```
 
 ## Próximamente

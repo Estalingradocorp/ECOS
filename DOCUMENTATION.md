@@ -385,6 +385,17 @@ Reproductor moderno con playlist y ecualizador visual animado.
 
 > **Persistencia:** las canciones añadidas se guardan automáticamente en el almacenamiento del navegador (IndexedDB) y **se mantienen entre sesiones**. El botón ✕ de cada pista las elimina también del almacenamiento. Un icono 💾 junto al nombre indica que la pista está guardada en el dispositivo, y el contador muestra «X pistas · Y guardadas».
 
+#### Carátula y luz neon
+| Función | Descripción |
+|---------|-------------|
+| `extractCover(blob)` | Extrae la imagen incrustada (ID3/APIC vía `jsmediatags`) y la devuelve como data-URL |
+| `extractDominantColor(imgSrc, cb)` | Calcula el color dominante de la carátula (canvas) |
+| `updateCoverForTrack(track, index)` | Extrae la carátula de forma perezosa y la aplica |
+| `renderCover(track, index)` | Muestra la carátula incrustada o la **imagen por defecto** y calcula el neon |
+| `applyNeon(color)` / `neonColorForIndex(index)` | Aplica el resplandor neon o un color por índice de pista |
+
+> **Carátula:** la carátula es **circular**. Muestra la **imagen incrustada** de la canción cuando existe; si no, se muestra una **imagen por defecto**. Un **anillo y resplandor neon** toman el **color dominante de la carátula** de cada canción (si el dominio bloquea CORS, se usa un color por índice de pista).
+
 > **Reanudación:** EC Music Pro guarda la pista actual, la posición de reproducción, el modo aleatorio, el modo de repetición y el volumen en `localStorage` (`ec_music_state`). Al reabrir la app, reanuda la reproducción **donde la dejaste** (cada 3 s, al pausar/cambiar de pista y al recargar/cerrar la página). Al cerrar la ventana la música solo se pausa (ya no se reinicia a 0:00), de modo que puedes cerrar y reabrir sin perder el avance.
 
 #### Reproducción

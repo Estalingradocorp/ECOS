@@ -20,6 +20,94 @@
         const btnShuffle = document.getElementById('btn-shuffle');
         const btnRepeat = document.getElementById('btn-repeat');
 
+        const DEFAULT_COVER = 'https://64.media.tumblr.com/76e1731cb57e42c75e23a5a49ac6b7ad/0405ac2cbd79fe6a-5c/s1280x1920/097c923e9b004fba2423a988cd1550ccd1253b69.pnj';
+        let currentNeon = null;
+
+        function arrayBufferToBase64(buf) {
+            const bytes = new Uint8Array(buf);
+            let binary = '';
+            for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
+            return btoa(binary);
+        }
+
+        function extractCover(blob) {
+            return new Promise(resolve => {
+                if (!window.jsmediatags || !blob) return resolve(null);
+                try {
+                    jsmediatags.read(blob, {
+                        onSuccess: tag => {
+                            const pic = tag.tags && tag.tags.picture;
+                            if (pic && pic.data) {
+                                try { resolve(`data:${pic.format};base64,${arrayBufferToBase64(pic.data)}`); }
+                                catch (e) { resolve(null); }
+                            } else resolve(null);
+                        },
+                        onError: () => resolve(null)
+                    });
+                } catch (e) { resolve(null); }
+            });
+        }
+
+        function extractDominantColor(imgSrc, cb) {
+            const img = new Image();
+            img.crossOrigin = 'anonymous';
+            img.onload = () => {
+                try {
+                    const canvas = document.createElement('canvas');
+                    const size = 40;
+                    canvas.width = size; canvas.height = size;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, size, size);
+                    const data = ctx.getImageData(0, 0, size, size).data;
+                    let r = 0, g = 0, b = 0, n = 0;
+                    for (let i = 0; i < data.length; i += 4) { r += data[i]; g += data[i + 1]; b += data[i + 2]; n++; }
+                    cb(`rgb(${Math.round(r / n)}, ${Math.round(g / n)}, ${Math.round(b / n)})`);
+                } catch (e) { cb(null); }
+            };
+            img.onerror = () => cb(null);
+            img.src = imgSrc;
+        }
+
+        function neonColorForIndex(index) {
+            return `hsl(${Math.abs(index) * 47 % 360}, 90%, 62%)`;
+        }
+
+        function applyNeon(color) {
+            currentNeon = color;
+            const playing = !audioPlayer.paused;
+            musicGlow.style.background = color;
+            musicGlow.style.opacity = playing ? '0.55' : '0.25';
+            musicCover.style.boxShadow = `0 0 30px ${color}, 0 0 70px ${color}55, 0 0 110px ${color}33`;
+            const ring = document.getElementById('music-cover-ring');
+            if (ring) ring.style.borderColor = color;
+        }
+
+        function updateCoverForTrack(track, index) {
+            if (track.cover === undefined && track.blob) {
+                extractCover(track.blob).then(c => {
+                    track.cover = c || null;
+                    if (currentTrackIndex >= 0 && playlist[currentTrackIndex] === track) renderCover(track, index);
+                });
+            } else {
+                renderCover(track, index);
+            }
+        }
+
+        function renderCover(track, index) {
+            const src = track.cover || DEFAULT_COVER;
+            if (src) {
+                musicCoverImg.src = src;
+                musicCoverImg.classList.remove('hidden');
+                musicCoverIcon.classList.add('hidden');
+            } else {
+                musicCoverImg.classList.add('hidden');
+                musicCoverIcon.classList.remove('hidden');
+            }
+            const fallback = neonColorForIndex(index);
+            applyNeon(fallback);
+            extractDominantColor(src, c => { if (c) applyNeon(c); });
+        }
+
         let playlist = [];
         let currentTrackIndex = -1;
         let shuffleMode = false;
@@ -98,8 +186,10 @@
                 playlist.push({
                     name: file.name ? file.name.replace(/\.[^/.]+$/, '') : (saved ? saved.name : 'Pista'),
                     url: URL.createObjectURL(file),
+                    blob: file,
                     duration: '--:--',
-                    storeId: saved ? saved.id : null
+                    storeId: saved ? saved.id : null,
+                    cover: undefined
                 });
             });
             updatePlaylistUI();
@@ -128,8 +218,10 @@
                     playlist.push({
                         name: e.name,
                         url: URL.createObjectURL(e.blob),
+                        blob: e.blob,
                         duration: '--:--',
-                        storeId: e.id
+                        storeId: e.id,
+                        cover: undefined
                     });
                 });
                 updatePlaylistUI();
@@ -216,21 +308,25 @@
             musicEq.classList.remove('playing');
             musicEq.style.opacity = '0';
             musicCover.style.background = coverGradients[0].map((c,i) => i===0?c:c).join(',');
-            musicCoverIcon.classList.remove('hidden');
             musicCoverImg.classList.add('hidden');
+            musicCoverIcon.classList.remove('hidden');
+            musicGlow.style.opacity = '0';
+            musicCover.style.boxShadow = '0 20px 40px rgba(0,0,0,0.3)';
+            currentNeon = null;
         }
 
         // --- Playback ---
         function playTrack(index) {
             if (index < 0 || index >= playlist.length) return;
             currentTrackIndex = index;
-            audioPlayer.src = playlist[index].url;
-            musicTitle.textContent = playlist[index].name;
+            const track = playlist[index];
+            audioPlayer.src = track.url;
+            musicTitle.textContent = track.name;
             musicArtist.textContent = `Pista ${index + 1} de ${playlist.length}`;
             currentGradient = index % coverGradients.length;
             const g = coverGradients[currentGradient];
             musicCover.style.background = `linear-gradient(135deg, ${g[0]}, ${g[1]})`;
-            musicGlow.style.background = `${g[0]}33`;
+            updateCoverForTrack(track, index);
             audioPlayer.play().catch(() => {});
             updatePlaylistUI();
             saveMusicState();
@@ -336,7 +432,8 @@
             musicEq.classList.add('playing');
             musicEq.style.opacity = '1';
             musicCover.style.transform = 'scale(1.03)';
-            musicCover.style.boxShadow = '0 20px 60px rgba(0,0,0,0.5)';
+            if (currentNeon) applyNeon(currentNeon);
+            else musicCover.style.boxShadow = '0 20px 60px rgba(0,0,0,0.5)';
         });
 
         audioPlayer.addEventListener('pause', () => {
@@ -344,7 +441,8 @@
             musicPlayIcon.classList.add('ml-0.5');
             musicEq.classList.remove('playing');
             musicCover.style.transform = 'scale(1)';
-            musicCover.style.boxShadow = '0 20px 40px rgba(0,0,0,0.3)';
+            if (currentNeon) applyNeon(currentNeon);
+            else musicCover.style.boxShadow = '0 20px 40px rgba(0,0,0,0.3)';
             saveMusicState();
         });
 

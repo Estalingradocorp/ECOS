@@ -534,11 +534,11 @@
                 <div id="music-glow" class="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-64 bg-purple-500/20 rounded-full blur-3xl pointer-events-none transition-all duration-1000"></div>
                 
                 <!-- Cover art -->
-                <div id="music-cover" class="relative w-44 h-44 rounded-2xl shadow-2xl mb-5 flex items-center justify-center overflow-hidden transition-all duration-700" style="background: linear-gradient(135deg, #e94560, #ff6b6b);">
+                <div id="music-cover" class="relative w-44 h-44 rounded-full shadow-2xl mb-5 flex items-center justify-center overflow-hidden transition-all duration-700" style="background: linear-gradient(135deg, #e94560, #ff6b6b);">
                     <i class="fa-solid fa-music text-white/80 text-5xl" id="music-cover-icon"></i>
-                    <div id="music-cover-img" class="hidden absolute inset-0 w-full h-full object-cover"></div>
-                    <!-- Vinyl ring effect -->
-                    <div class="absolute inset-0 rounded-2xl border border-white/10 pointer-events-none"></div>
+                    <img id="music-cover-img" class="hidden absolute inset-0 w-full h-full object-cover rounded-full" alt="Carátula">
+                    <!-- Neon ring -->
+                    <div id="music-cover-ring" class="absolute inset-0 rounded-full border-2 pointer-events-none" style="border-color: rgba(255,255,255,0.15);"></div>
                 </div>
                 
                 <!-- Track info -->
@@ -1384,6 +1384,7 @@ iniciarConexion("192.168.1.100");</textarea>
     <script src="assets/js/studio.js"></script>
     <script src="assets/js/tasks-passgen.js"></script>
     <script src="assets/js/storage.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsmediatags@3.9.8/dist/jsmediatags.min.js"></script>
     <script src="assets/js/music.js"></script>
     <script src="assets/js/video-tv.js"></script>
 </body>

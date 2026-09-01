@@ -14,6 +14,7 @@ Reproductor de música moderno con playlist, ecualizador visual animado y persis
 
 - 📄 **Módulo:** 12 (`assets/js/music.js`)
 - 🧠 **Estado guardado:** `ec_music_state`
+- 🎨 **Carátula:** muestra la imagen incrustada de la canción (ID3 vía `jsmediatags`); si no tiene, usa una **imagen por defecto**. Carátula **circular** con **anillo y resplandor neon** que cambia de color según la canción (color dominante de la carátula, o por índice si CORS lo impide).
 
 ## Funciones
 | Función | Descripción |

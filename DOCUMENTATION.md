@@ -709,7 +709,12 @@ open index.html   # (o doble clic / iniciar http-server)
 
 ## 8. Registro de cambios
 
-### 8.1 Persistencia y reanudación en reproductores (última)
+### 8.2 Carátula y luz neon en EC Music Pro
+- La **carátula circular** muestra la **imagen incrustada** de la canción (ID3/APIC vía `jsmediatags`) cuando existe.
+- Si la canción **no tiene carátula**, se muestra una **imagen por defecto**.
+- La carátula es **circular** con un **anillo y resplandor neon** cuyo color se extrae automáticamente del color dominante de la carátula de cada canción (cambia según la canción). Si no se puede extraer (CORS), se usa un color basado en el índice de la pista.
+
+### 8.1 Persistencia y reanudación en reproductores
 - **Persistencia en IndexedDB** (`storage.js`, `MediaStore`): las canciones y videos que el usuario añade se guardan automáticamente y se **mantienen entre sesiones** y al recargar la página.
 - **Corrección de `storeId`**: al añadir un archivo ahora se captura el id devuelto por `MediaStore.save`, de modo que el icono 💾 «guardado» y el borrado del almacenamiento funcionan correctamente en cada pista.
 - **Reanudación de música** (`music.js`): se guarda en `localStorage` (`ec_music_state`) la pista actual, la posición, el modo aleatorio, el modo de repetición y el volumen.

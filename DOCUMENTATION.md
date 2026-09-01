@@ -707,7 +707,20 @@ open index.html   # (o doble clic / iniciar http-server)
 
 ---
 
-## 8. Licencia y créditos
+## 8. Registro de cambios
+
+### 8.1 Persistencia y reanudación en reproductores (última)
+- **Persistencia en IndexedDB** (`storage.js`, `MediaStore`): las canciones y videos que el usuario añade se guardan automáticamente y se **mantienen entre sesiones** y al recargar la página.
+- **Corrección de `storeId`**: al añadir un archivo ahora se captura el id devuelto por `MediaStore.save`, de modo que el icono 💾 «guardado» y el borrado del almacenamiento funcionan correctamente en cada pista.
+- **Reanudación de música** (`music.js`): se guarda en `localStorage` (`ec_music_state`) la pista actual, la posición, el modo aleatorio, el modo de repetición y el volumen.
+- **Reanudación de video** (`video-tv.js`): se guarda en `localStorage` (`ec_video_state`) la pista actual y la posición.
+- **Guardado exacto al recargar/cerrar** (`pagehide`): la posición se guarda al instante al refrescar o cerrar la pestaña, sin perder segundos.
+- **Indicadores visuales**: icono 💾 junto a los elementos guardados y contador «X pistas · Y guardadas» (música) / «N (M guardados)» (video).
+- **Cerrar ventana**: ahora solo pausa la reproducción (ya no reinicia a 0:00), permitiendo cerrar y reabrir sin perder el avance.
+
+---
+
+## 9. Licencia y créditos
 
 Proyecto creado por **Estalingrado Corp** con fines educativos y de demostración.
 

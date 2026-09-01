@@ -526,6 +526,10 @@
             <div class="w-16"></div>
         </div>
         <div id="music-body" class="flex flex-col h-full relative overflow-hidden" style="background: linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);">
+            <!-- Botón flotante: abrir lista -->
+            <button onclick="toggleMusicDrawer()" id="music-open-list" class="absolute right-3 top-3 z-[60] flex items-center gap-1.5 bg-white/10 hover:bg-white/20 border border-white/15 text-white/80 rounded-full px-3 py-1.5 text-[11px] font-semibold transition active:scale-95" title="Abrir lista de reproducción">
+                <i class="fa-solid fa-list-ul"></i> Lista
+            </button>
             
             <!-- Drop zone overlay -->
             <div id="music-dropzone" class="hidden absolute inset-0 z-50 bg-blue-500/20 backdrop-blur-sm border-2 border-dashed border-blue-400 rounded-b-xl flex flex-col items-center justify-center gap-3">

@@ -394,6 +394,7 @@ Reproductor moderno con playlist y ecualizador visual animado.
 | `createPlaylist()` / `deleteCurrentPlaylist()` | Crea / elimina una lista |
 | `openAddMenu(ev, index)` | Menú para añadir/quitar la canción a una lista |
 | `removeTrackFromCurrentPlaylist(index)` | Quita la canción de la lista activa |
+| `toggleMusicDrawer()` / `openMusicDrawer()` / `closeMusicDrawer()` | Abre / cierra la lista deslizante dentro de la ventana |
 
 **Carga de archivos**: input de archivo + **drag & drop** sobre la zona de soltar.
 

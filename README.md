@@ -22,8 +22,8 @@ Un sistema operativo completo basado en navegador, inspirado en iPadOS/macOS con
 |-----|-------------|---------------------|
 | **EC Office Pro** | Procesador de texto estilo LibreOffice | Sistema de páginas A4, tablas, buscar/reemplazar, emojis, subtítulos, exportar a HTML/PDF/DOC/Markdown/TXT, auto-guardado |
 | **EC Studio Pro** | Editor de imágenes profesional | Recortar (con proporciones 1:1/4:3/16:9/3:2), dibujar, formas, relleno de color, texto inline, eyedropper, opacidad, deshacer/rehacer, zoom, rotación, 8 filtros, 9 ajustes, exportar PNG/JPEG/WebP con calidad y escala |
-| **EC Music Pro** | Reproductor de música moderno | Carátula circular con luz neon dinámica, carátula incrustada o por defecto, listas de reproducción (menú lateral dentro de la app), shuffle, repetir, ecualizador animado, drag & drop, persistencia y reanudación |
-| **EC Video Pro** | Reproductor de video completo | Soporte MP4/WebM/MOV, subtítulos, velocidad, screenshot, PiP, persistencia y reanudación, atajos estilo VLC |
+| **EC Music Pro** | Reproductor de música moderno | Carátula circular con luz neon dinámica, carátula incrustada o por defecto, listas de reproducción (menú lateral dentro de la app), shuffle, repetir, ecualizador animado, drag & drop, persistencia y reanudación bajo demanda (sin autoplay al cargar) |
+| **EC Video Pro** | Reproductor de video completo | Soporte MP4/WebM/MOV, subtítulos, velocidad, screenshot, PiP, lista y TV desplegables, persistencia y reanudación bajo demanda (sin autoplay al cargar), atajos estilo VLC |
 | **TV en Vivo** | 31 canales IPTV gratuitos | Noticias, deportes, entretenimiento, música, infantil. Añadir streams propios |
 | **ECCode** | Editor de código con resaltado | JavaScript, Python, HTML, CSS, SQL, números de línea sincronizados |
 | **Calculadora** | Calculadora completa | Operaciones básicas, raíz cuadrada, inverso, al cuadrado |
@@ -56,6 +56,7 @@ Un sistema operativo completo basado en navegador, inspirado en iPadOS/macOS con
 | `C` | Subtítulos |
 | `S` | Captura de pantalla |
 | `P` | Picture-in-Picture |
+| `L` | Mostrar/ocultar lista de reproducción |
 | `[ ]` | Bajar / Subir velocidad |
 | `0-9` | Saltar al 0%-90% |
 | `Ctrl+O` | Abrir archivo |

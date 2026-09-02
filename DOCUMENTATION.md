@@ -411,7 +411,7 @@ Reproductor moderno con playlist y ecualizador visual animado.
 
 > **Carátula:** la carátula es **circular**. Muestra la **imagen incrustada** de la canción cuando existe; si no, se muestra una **imagen por defecto**. Un **anillo y resplandor neon** toman el **color dominante de la carátula** de cada canción (si el dominio bloquea CORS, se usa un color por índice de pista).
 
-> **Reanudación:** EC Music Pro guarda la pista actual, la posición de reproducción, el modo aleatorio, el modo de repetición y el volumen en `localStorage` (`ec_music_state`). Al reabrir la app, reanuda la reproducción **donde la dejaste** (cada 3 s, al pausar/cambiar de pista y al recargar/cerrar la página). Al cerrar la ventana la música solo se pausa (ya no se reinicia a 0:00), de modo que puedes cerrar y reabrir sin perder el avance.
+> **Reanudación (sin autoplay):** EC Music Pro guarda la pista actual, la posición de reproducción, el modo aleatorio, el modo de repetición y el volumen en `localStorage` (`ec_music_state`). Al **cargar la página no se reproduce nada**; el estado se restaura (pista seleccionada) y el sonido solo arranca cuando el usuario **abre la ventana** (hook `ecMusicOnOpen` desde `openWindow()`). Al cerrar la ventana la música solo se pausa, de modo que puedes cerrar y reabrir sin perder el avance.
 
 #### Reproducción
 | Función | Descripción |
@@ -453,16 +453,20 @@ Reproductor completo estilo VLC con controles avanzados y overlay de mensajes.
 |---------|-------------|
 | `vidAddFiles(files)` | Añade archivos de video (MP4/WebM/MOV) |
 | `vidPersistFiles(files)` | Guarda los archivos en **IndexedDB** (`MediaStore`) |
-| `vidLoadSavedPlaylist()` | Restaura los videos guardados al abrir la app |
+| `vidLoadSavedPlaylist()` | Restaura los videos guardados al abrir la app (**sin reproducir**) |
+| `ecVideoOnOpen` (`window.ecVideoOnOpen`) | Reanuda la reproducción al abrir la ventana |
 | `vidDeleteStored(item)` | Borra el video de IndexedDB |
 | `vidUpdatePlaylistUI()` | Renderiza la lista |
 | `vidRemoveTrack(idx)` | Elimina un elemento (también de almacenamiento) |
 | `vidResetUI()` | Reinicia el reproductor |
 | `vidPlay(idx)` | Reproduce un elemento |
+| `vidTogglePlaylist()` | Muestra/oculta el drawer de la lista (tecla `L`) |
 
 > **Persistencia:** los videos añadidos se guardan automáticamente en el navegador (IndexedDB) y **se mantienen entre sesiones**. El botón ✕ de cada elemento los elimina también del almacenamiento. Un icono 💾 junto al nombre indica que el video está guardado, y el contador de la lista muestra «N (M guardados)».
 
-> **Reanudación:** EC Video Pro guarda la pista actual y la posición de reproducción en `localStorage` (`ec_video_state`). Al reabrir la app reanuda el video **donde lo dejaste** (cada 3 s, al pausar/cambiar de video y al recargar/cerrar la página). Al cerrar la ventana el video solo se pausa (ya no se reinicia a 0:00).
+> **Menú desplegable:** la **lista de reproducción** y el panel de **TV en Vivo** son ahora **drawers que se deslizan por encima del video** (clase `.video-drawer`) en vez de columnas fijas. Se abren desde la barra de herramientas (iconos) o con la tecla `L`; abrir uno cierra el otro y ambos tienen botón ✕. En móvil (≤768px) ocupan el **88% del ancho** y el video usa todo el espacio.
+
+> **Reanudación (sin autoplay):** EC Video Pro guarda la pista actual y la posición en `localStorage` (`ec_video_state`). Al **cargar la página no se reproduce nada**; la lista se restaura con la pista seleccionada y el sonido solo arranca cuando el usuario **abre la ventana** (hook `ecVideoOnOpen` desde `openWindow()`). Al cerrar la ventana el video solo se pausa.
 
 #### Reproducción y controles
 | Función | Descripción |
@@ -504,6 +508,7 @@ Reproductor completo estilo VLC con controles avanzados y overlay de mensajes.
 | `C` | Subtítulos |
 | `S` | Captura de pantalla |
 | `P` | Picture-in-Picture |
+| `L` | Mostrar/ocultar lista de reproducción |
 | `[` / `]` | Bajar / Subir velocidad |
 | `Home` | Ir al inicio |
 | `End` | Ir al final |
@@ -532,7 +537,7 @@ Reproductor integrado con **31 canales gratuitos** y posibilidad de añadir stre
 | `tvPlayChannel(ch)` | Reproduce un canal en el reproductor de video |
 | `tvFilterCategory(cat)` | Filtra por categoría (todos, mis canales, o categoría) |
 | `tvAddStream()` | Añade un stream personalizado por URL (persistido en `ec_tv_channels`) |
-| `tvToggleTVPanel()` | Muestra/oculta el panel de TV |
+| `tvToggleTVPanel()` | Muestra/oculta el panel de TV (drawer que se desliza sobre el video) |
 
 - **Añadir canal**: escribe la URL del stream y pulsa Enter, luego introduce el nombre. Los canales del usuario se guardan en `localStorage` y se marcan como "(tu)".
 - **Indicador "EN VIVO"** y badge de canal reproduciéndose.
@@ -756,9 +761,17 @@ open index.html   # (o doble clic / iniciar http-server)
 - **Corrección de `storeId`**: al añadir un archivo ahora se captura el id devuelto por `MediaStore.save`, de modo que el icono 💾 «guardado» y el borrado del almacenamiento funcionan correctamente en cada pista.
 - **Reanudación de música** (`music.js`): se guarda en `localStorage` (`ec_music_state`) la pista actual, la posición, el modo aleatorio, el modo de repetición y el volumen.
 - **Reanudación de video** (`video-tv.js`): se guarda en `localStorage` (`ec_video_state`) la pista actual y la posición.
+- **Sin reproducción automática al cargar**: al abrir o actualizar la página **ningún reproductor suena**. Música y video restauran su estado (pista seleccionada + posición) pero no llaman a `.play()`. La reproducción solo arranca cuando el usuario **abre la app** mediante los hooks globales `window.ecMusicOnOpen` y `window.ecVideoOnOpen`, invocados desde `openWindow()` en `core.js`. Un guard evita reiniciar al solo llevar la ventana al frente.
 - **Guardado exacto al recargar/cerrar** (`pagehide`): la posición se guarda al instante al refrescar o cerrar la pestaña, sin perder segundos.
 - **Indicadores visuales**: icono 💾 junto a los elementos guardados y contador «X pistas · Y guardadas» (música) / «N (M guardados)» (video).
 - **Cerrar ventana**: ahora solo pausa la reproducción (ya no reinicia a 0:00), permitiendo cerrar y reabrir sin perder el avance.
+
+### 8.0 Lista de reproducción y TV desplegables en EC Video Pro
+- La **lista de reproducción** (`#video-playlist-panel`) y el panel de **TV en Vivo** (`#video-tv-panel`) ya no son columnas fijas que reducen el video: ahora son **drawers que se deslizan por encima** del video (clase `.video-drawer`, posición absoluta a la derecha, `z-index` 40).
+- **Apertura**: desde los iconos de la barra de herramientas (lista 📜 y torre 📡) o con la tecla **`L`** (lista). Ambos tienen botón ✕. Abrir uno **cierra automáticamente** el otro y desactiva su botón (toggle `active`).
+- **Animación**: transición CSS `transform 0.28s ease` (`.open` → `translateX(0)`); estado cerrado = `translateX(105%)` fuera de pantalla.
+- **Funciones**: `vidTogglePlaylist()` (lista) y `tvToggleTVPanel()` (TV). La TV se inicializa oculta.
+- **Móvil** (≤768px): los drawers ocupan **88% del ancho** para facilitar el toque; el slider de volumen se oculta y botones/tamaño se ajustan. Como los paneles flotan, el video usa **todo el ancho** en cualquier tamaño.
 
 ---
 

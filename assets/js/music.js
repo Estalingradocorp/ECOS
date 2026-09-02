@@ -118,6 +118,7 @@
         let repeatMode = 0; // 0=off, 1=all, 2=one
         let shuffleOrder = [];
         let pendingResumeTime = null;
+        let pendingResume = null;
         let lastStateSave = 0;
         const musicStateKey = 'ec_music_state';
         const playlistsKey = 'ec_playlists';
@@ -412,10 +413,13 @@
                 }
                 rebuildPlaylistView();
                 if (st && typeof st.index === 'number' && st.index >= 0 && st.index < playlist.length) {
-                    pendingResumeTime = typeof st.time === 'number' ? st.time : 0;
-                    playTrack(st.index);
+                    pendingResume = { index: st.index, time: typeof st.time === 'number' ? st.time : 0 };
+                    currentTrackIndex = st.index;
+                    updatePlaylistUI();
                 } else if (currentTrackIndex === -1) {
-                    playTrack(0);
+                    pendingResume = { index: 0, time: 0 };
+                    currentTrackIndex = 0;
+                    updatePlaylistUI();
                 }
             }).catch(e => console.warn('No se pudo cargar música:', e));
         }
@@ -668,6 +672,16 @@
         // Guardar estado exacto al recargar/cerrar la página
         window.addEventListener('pagehide', () => saveMusicState());
 
-        // Restaurar canciones guardadas al abrir
+        // Reanudar reproducción solo cuando el usuario abre la app
+        window.ecMusicOnOpen = function() {
+            if (!pendingResume || !playlist.length) return;
+            const r = pendingResume;
+            if (r.index >= playlist.length) r.index = 0;
+            pendingResume = null;
+            pendingResumeTime = r.time;
+            playTrack(r.index);
+        };
+
+        // Restaurar canciones guardadas al abrir (sin reproducir automáticamente)
         loadSavedPlaylist();
 

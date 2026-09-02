@@ -315,7 +315,9 @@
                 win.classList.add('window-opening');
             }
             win.style.display = 'flex'; 
-            bringToFront(win); 
+            bringToFront(win);
+            if (id === 'window-music' && typeof window.ecMusicOnOpen === 'function') window.ecMusicOnOpen();
+            if (id === 'window-video' && typeof window.ecVideoOnOpen === 'function') window.ecVideoOnOpen();
         }
         function minimizeWindow(id) { 
             const win = document.getElementById(id); 

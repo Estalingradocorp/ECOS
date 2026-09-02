@@ -735,13 +735,14 @@
                 </div>
             </div>
             
-            <!-- Playlist sidebar -->
-            <div id="video-playlist-panel" class="w-[240px] flex-shrink-0 bg-[#111] border-l border-white/10 flex flex-col">
+            <!-- Playlist drawer (slides over the video) -->
+            <div id="video-playlist-panel" class="video-drawer hidden w-[260px] bg-[#111] border-l border-white/10 flex flex-col">
                 <div class="px-3 py-2.5 border-b border-white/10 flex justify-between items-center">
                     <span class="text-[11px] font-bold text-white/40 uppercase tracking-wider">Lista</span>
                     <div class="flex items-center gap-1.5">
                         <span id="video-playlist-count" class="text-[10px] text-white/25">0</span>
                         <button onclick="document.getElementById('video-file-input').click()" class="w-6 h-6 rounded-md bg-white/10 hover:bg-white/20 flex items-center justify-center text-white/50 hover:text-white transition text-xs" title="Añadir video"><i class="fa-solid fa-plus"></i></button>
+                        <button onclick="vidTogglePlaylist()" class="w-6 h-6 rounded-md bg-white/10 hover:bg-white/20 flex items-center justify-center text-white/50 hover:text-white transition text-xs" title="Cerrar lista"><i class="fa-solid fa-xmark"></i></button>
                     </div>
                 </div>
                 <div id="video-playlist-items" class="flex-grow overflow-y-auto py-1">
@@ -755,12 +756,15 @@
                 </div>
             </div>
 
-            <!-- TV Panel (hidden by default) -->
-            <div id="video-tv-panel" class="hidden w-[280px] flex-shrink-0 bg-[#0d1117] border-l border-white/10 flex-col">
+            <!-- TV Panel drawer (slides over the video) -->
+            <div id="video-tv-panel" class="video-drawer hidden w-[280px] bg-[#0d1117] border-l border-white/10 flex-col">
                 <div class="px-3 py-2.5 border-b border-white/10">
                     <div class="flex items-center justify-between mb-2">
                         <span class="text-[11px] font-bold text-white/50 uppercase tracking-wider flex items-center gap-1.5"><i class="fa-solid fa-tower-broadcast text-rose-400"></i> TV en Vivo</span>
-                        <button onclick="document.getElementById('tv-url-input').focus()" class="text-[10px] text-rose-400/60 hover:text-rose-400 transition"><i class="fa-solid fa-plus"></i> Añadir</button>
+                        <div class="flex items-center gap-1.5">
+                            <button onclick="document.getElementById('tv-url-input').focus()" class="text-[10px] text-rose-400/60 hover:text-rose-400 transition"><i class="fa-solid fa-plus"></i> Añadir</button>
+                            <button onclick="vidToggleTVPanel()" class="w-6 h-6 rounded-md bg-white/10 hover:bg-white/20 flex items-center justify-center text-white/50 hover:text-white transition text-xs" title="Cerrar TV"><i class="fa-solid fa-xmark"></i></button>
+                        </div>
                     </div>
                     <!-- Add stream URL -->
                     <div class="flex gap-1">

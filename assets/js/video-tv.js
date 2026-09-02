@@ -125,9 +125,11 @@
                 vidUpdatePlaylistUI();
                 if (st && typeof st.index === 'number' && st.index >= 0 && st.index < vidPlaylist.length) {
                     vidResumeTime = typeof st.time === 'number' ? st.time : 0;
-                    vidPlay(st.index);
+                    vidCurrentIdx = st.index;
+                    vidUpdatePlaylistUI();
                 } else if (vidCurrentIdx === -1) {
-                    vidPlay(0);
+                    vidResumeTime = 0;
+                    vidCurrentIdx = 0;
                 }
                 if (vidEmptyState) vidEmptyState.style.display = 'none';
                 vidContainer.classList.add('has-video');
@@ -426,6 +428,7 @@
             if (e.code === 'KeyC') { e.preventDefault(); vidToggleSubtitles(); }
             if (e.code === 'KeyS' && !e.ctrlKey) { e.preventDefault(); vidScreenshot(); }
             if (e.code === 'KeyP') { e.preventDefault(); vidTogglePiP(); }
+            if (e.code === 'KeyL') { e.preventDefault(); vidTogglePlaylist(); }
             if (e.code === 'BracketRight') { vidSetSpeed(Math.min(4, vidSpeed + 0.25)); }
             if (e.code === 'BracketLeft') { vidSetSpeed(Math.max(0.25, vidSpeed - 0.25)); }
             if (e.code === 'Home') { e.preventDefault(); vidEl.currentTime = 0; }
@@ -570,16 +573,25 @@
         tvUrlInput.addEventListener('keydown', e => { if (e.key === 'Enter') tvAddStream(); });
 
         function tvToggleTVPanel() {
-            const show = tvPanel.classList.contains('hidden');
-            tvPanel.classList.toggle('hidden');
-            document.getElementById('vid-tv-toggle').classList.toggle('active', show);
-            if (show) tvRenderChannels();
+            const open = !tvPanel.classList.contains('open');
+            if (open) document.getElementById('video-playlist-panel').classList.remove('open');
+            tvPanel.classList.remove('hidden');
+            tvPanel.classList.toggle('open', open);
+            document.getElementById('vid-tv-toggle').classList.toggle('active', open);
+            document.getElementById('vid-playlist-toggle').classList.remove('active');
+            if (open) tvRenderChannels();
         }
 
         function vidTogglePlaylist() {
             const panel = document.getElementById('video-playlist-panel');
-            panel.classList.toggle('hidden');
-            document.getElementById('vid-playlist-toggle').classList.toggle('active', !panel.classList.contains('hidden'));
+            const toggleBtn = document.getElementById('vid-playlist-toggle');
+            const open = !panel.classList.contains('open');
+            if (open) { tvPanel.classList.remove('open'); document.getElementById('vid-tv-toggle').classList.remove('active'); }
+            panel.classList.remove('hidden');
+            panel.classList.toggle('open', open);
+            toggleBtn.classList.toggle('active', open);
+            toggleBtn.innerHTML = open ? '<i class="fa-solid fa-xmark"></i>' : '<i class="fa-solid fa-list"></i>';
+            toggleBtn.title = open ? 'Cerrar lista' : 'Mostrar lista';
         }
 
         // Initialize TV panel hidden
@@ -588,6 +600,12 @@
         // Guardar estado exacto al recargar/cerrar la página
         window.addEventListener('pagehide', () => vidSaveState());
 
-        // Restaurar videos guardados al abrir
+        // Reanudar reproducción solo cuando el usuario abre la app
+        window.ecVideoOnOpen = function() {
+            if (vidCurrentIdx < 0 || vidCurrentIdx >= vidPlaylist.length) return;
+            vidPlay(vidCurrentIdx);
+        };
+
+        // Restaurar videos guardados al abrir (sin reproducir automáticamente)
         vidLoadSavedPlaylist();
 

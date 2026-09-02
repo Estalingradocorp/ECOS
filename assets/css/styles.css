@@ -555,6 +555,7 @@
         }
         .video-btn:hover { color: #fff; background: rgba(255,255,255,0.1); }
         .video-btn.active { color: #e94560; }
+#vid-playlist-toggle.active { color: #e94560; background: rgba(233,69,96,0.15); }
         .video-volume-wrap { display: flex; align-items: center; gap: 4px; }
         .video-volume-slider {
             -webkit-appearance: none; appearance: none; width: 0; height: 4px;
@@ -652,6 +653,17 @@
         .video-container:not(.paused) #video-empty-state,
         .video-container.has-video #video-empty-state { opacity: 0; pointer-events: none; }
 
+        /* === Video drawers (playlist / TV) === */
+        #video-body { position: relative; }
+        .video-drawer {
+            position: absolute; top: 0; right: 0; height: 100%;
+            z-index: 40; display: flex;
+            transform: translateX(105%); transition: transform 0.28s ease;
+            box-shadow: -8px 0 24px rgba(0,0,0,0.5);
+        }
+        .video-drawer.open { transform: translateX(0); }
+        .video-drawer.hidden { display: none !important; }
+
         /* ============ EC STUDIO PRO ============ */
         .img-toolbar { min-height: 36px; }
         .img-tool-btn {
@@ -731,4 +743,9 @@
             .toolbar::-webkit-scrollbar, .code-bar-actions::-webkit-scrollbar { display: none; }
             #dock { width: 95%; max-width: 95%; overflow-x: auto; justify-content: flex-start; }
             #desktop-grid { grid-template-columns: repeat(4, 1fr); gap: 15px; }
+            .video-drawer { width: 88% !important; max-width: 88% !important; }
+            .video-controls { padding: 26px 8px 8px; }
+            .video-volume-slider { display: none; }
+            .video-btn { font-size: 13px; padding: 6px; }
+            .video-time { font-size: 10px; }
         }

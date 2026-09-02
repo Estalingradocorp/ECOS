@@ -735,7 +735,7 @@ open index.html   # (o doble clic / iniciar http-server)
 ## 8. Registro de cambios
 
 ### 8.4 Listas de reproducción y menú lateral en EC Music Pro
-- **Menú lateral desplegable:** la lista de canciones ahora es un **drawer lateral izquierdo** que se abre con el botón 📜 (icono de lista) junto a los controles del reproductor (o pulsando en la carátula/menú). Desde ahí el usuario **selecciona la canción** que quiere escuchar — funciona en PC y móvil (el drawer se adapta al 88% del ancho en pantallas pequeñas).
+- **Menú lateral desplegable (solo dentro de EC Music Pro):** la lista de canciones es un **drawer** que se desliza desde la izquierda **dentro de la propia ventana** de EC Music Pro (no sobre todo el sistema). Se abre con el botón flotante **«Lista»** (esquina superior derecha) o el icono 📜 junto a los controles. Desde ahí el usuario **selecciona la canción** que quiere escuchar — funciona en PC y móvil (en móvil ocupa ~90% del ancho).
 - **Armar listas:** puedes crear **listas de reproducción nombradas** con el botón `+` del selector. Un menú desplegable permite **añadir/quitar canciones** a cualquier lista desde la Biblioteca (icono de lista 🎵 en cada canción).
 - **Selector de lista:** cada lista creada guarda sus canciones (referencias por `storeId`) en `localStorage` (`ec_playlists`) y persiste entre sesiones. La lista activa se recuerda al reabrir.
 - **Reproducción por lista:** al seleccionar una lista, solo se muestran y reproducen sus canciones (siguiente/anterior/aleatorio dentro de esa lista). Al eliminarla, las canciones no se borran.

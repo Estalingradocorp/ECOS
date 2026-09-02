@@ -664,7 +664,21 @@
         .video-drawer.open { transform: translateX(0); }
         .video-drawer.hidden { display: none !important; }
 
-        /* ============ EC STUDIO PRO ============ */
+        /* Equalizer — always visible when .eq-visible is set */
+.eq-visible { display: flex !important; }
+@media (max-width: 768px) {
+    #music-eq.eq-visible { height: 32px; gap: 2px; }
+    #music-eq.eq-visible .eq-bar { height: 6px !important; }
+}
+
+/* Music cover ring pulse animation */
+@keyframes coverPulse {
+    0%, 100% { box-shadow: 0 0 20px rgba(233,69,96,0.3), 0 0 50px rgba(233,69,96,0.15), 0 0 80px rgba(233,69,96,0.08); }
+    50% { box-shadow: 0 0 30px rgba(233,69,96,0.5), 0 0 70px rgba(233,69,96,0.3), 0 0 110px rgba(233,69,96,0.12); }
+}
+#music-cover.playing { animation: coverPulse 1.5s ease-in-out infinite; }
+
+/* ============ EC STUDIO PRO ============ */
         .img-toolbar { min-height: 36px; }
         .img-tool-btn {
             display: flex; align-items: center; gap: 4px;

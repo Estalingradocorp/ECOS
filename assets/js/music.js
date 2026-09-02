@@ -512,6 +512,7 @@
             musicPlayIcon.classList.add('ml-0.5');
             musicEq.classList.remove('playing');
             musicEq.style.opacity = '0';
+            musicCover.classList.remove('playing');
             musicCover.style.background = coverGradients[0].map((c,i) => i===0?c:c).join(',');
             musicCoverImg.classList.add('hidden');
             musicCoverIcon.classList.remove('hidden');
@@ -637,6 +638,7 @@
             musicEq.classList.add('playing');
             musicEq.style.opacity = '1';
             musicCover.style.transform = 'scale(1.03)';
+            musicCover.classList.add('playing');
             if (currentNeon) applyNeon(currentNeon);
             else musicCover.style.boxShadow = '0 20px 60px rgba(0,0,0,0.5)';
         });
@@ -645,7 +647,9 @@
             musicPlayIcon.classList.replace('fa-pause', 'fa-play');
             musicPlayIcon.classList.add('ml-0.5');
             musicEq.classList.remove('playing');
+            musicEq.style.opacity = '0';
             musicCover.style.transform = 'scale(1)';
+            musicCover.classList.remove('playing');
             if (currentNeon) applyNeon(currentNeon);
             else musicCover.style.boxShadow = '0 20px 40px rgba(0,0,0,0.3)';
             saveMusicState();

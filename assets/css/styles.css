@@ -749,6 +749,8 @@
             .title-bar { padding: 16px; padding-top: 30px; }
             #music-drawer { width: 90% !important; max-width: none !important; } 
             .title-bar button.bg-red-500, .title-bar button.bg-yellow-400 { width: 20px !important; height: 20px !important; }
+            #window-music .flex.flex-col.items-center { padding-top: 24px !important; }
+            #window-music #music-open-list { top: 12px; }
             .office-workspace { padding: 10px 0; }
             .office-page { width: 95vw !important; height: auto !important; min-height: 130vw !important; box-shadow: 0 1px 4px rgba(0,0,0,0.2) !important; }
             .office-page-editor { padding: 12vw 10vw; font-size: 11pt; }

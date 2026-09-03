@@ -70,6 +70,8 @@ Un sistema operativo completo basado en navegador, inspirado en iPadOS/macOS con
 | `S` | Aleatorio (shuffle) |
 | `R` | Modo repetir |
 
+> 📱 **Móvil (≤768px):** la carátula/logo tiene `padding-top: 24px` para que no quede pegada a la barra de título con los botones de cerrar/minimizar (regla en `assets/css/styles.css`). El botón flotante «Lista» se mantiene a 12px del borde superior.
+
 ### EC Studio Pro
 | Atajo | Acción |
 |-------|--------|

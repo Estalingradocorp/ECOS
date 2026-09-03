@@ -746,6 +746,7 @@ open index.html   # (o doble clic / iniciar http-server)
 - **Selector de lista:** cada lista creada guarda sus canciones (referencias por `storeId`) en `localStorage` (`ec_playlists`) y persiste entre sesiones. La lista activa se recuerda al reabrir.
 - **Reproducción por lista:** al seleccionar una lista, solo se muestran y reproducen sus canciones (siguiente/anterior/aleatorio dentro de esa lista). Al eliminarla, las canciones no se borran.
 - **Arreglo móvil:** la carátula se reduce y el ecualizador decorativo se oculta en pantallas pequeñas; el drawer ocupa casi todo el ancho para tocar las canciones con comodidad.
+- **Espaciado superior en móvil (≤768px):** la carátula/logo tiene `padding-top: 24px` para que no quede **pegada a la barra de título** (donde están los botones de cerrar/minimizar). Regla en `assets/css/styles.css` dentro del `@media (max-width: 768px)`. El botón flotante **«Lista»** se mantiene a `12px` del borde superior.
 
 ### 8.3 Fondos de pantalla Saturno 4K
 - Se añadieron **4 fondos de Saturno en 4K** desde el catálogo oficial de **NASA** (`images-assets.nasa.gov`): «El día que la Tierra sonrió» (PIA17172, 9000×3500), «Equinoccio» (PIA11667, 7227×3847), «Cuatro años» (PIA11141) y «Anillos helados» (PIA08389).

@@ -668,7 +668,7 @@
 .eq-visible { display: flex !important; }
 @media (max-width: 768px) {
     #music-eq.eq-visible { height: 32px; gap: 2px; }
-    #music-eq.eq-visible .eq-bar { height: 6px !important; }
+    #music-eq.eq-visible .eq-bar { height: 6px; }
 }
 
 /* Music cover ring pulse animation */
